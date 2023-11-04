@@ -28,7 +28,7 @@ experience:
     company_logo: org-x
     location: Norway
     date_start: '2015-08-01'
-    date_end: '2018-6-1'
+    date_end: '2018-06-01'
     description: Some text
 
 design:

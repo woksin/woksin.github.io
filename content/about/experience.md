@@ -28,7 +28,7 @@ experience:
     company_logo: org_dnv
     location: Høvik, Norway
     date_start: '2023-03-01'
-    date_end: '2023-08-1'
+    date_end: '2023-08-01'
     description: |2-
         Some Text:
         
@@ -41,7 +41,7 @@ experience:
     company_logo: org_aigonix
     location: Oslo, Norway
     date_start: '2018-07-01'
-    date_end: '2023-03-1'
+    date_end: '2023-03-01'
     description: Some text
 
 design:
