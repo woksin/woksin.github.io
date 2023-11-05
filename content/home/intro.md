@@ -17,5 +17,8 @@ author: admin
 #      path:  # enter filename of a video in /assets/media
 #  css_class: fullscreen
 ---
+ 
+ Hi, there! I'm **Sindre**, a passionate programmer, father, wannabe gamer and hobby guitarist.
+ {style="font-size: 1.2rem; background: #FFB76B; background: linear-gradient(to right, #FFB76B 0%, #FFA73D 30%, #FF7C00 60%, #FF7F04 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"}
 
-PLaceholder
+ Check out my [resumé](/about/) and some projects I want to highlight below 🤩

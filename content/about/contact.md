@@ -17,13 +17,20 @@ content:
   autolink: true
 
   # Email form provider
-  form:
-    provider: netlify
-    formspree:
-      id:
-    netlify:
-      # Enable CAPTCHA challenge to reduce spam?
-      captcha: false
+  # form:
+  #   provider: netlify
+  #   formspree:
+  #     id:
+  #   netlify:
+  #     # Enable CAPTCHA challenge to reduce spam?
+  #     captcha: false
+  email: sindrewilting@gmail.com
+  phone: +47 414 80 655
+  contact_links:
+    - icon: linkedin
+      icon_pack: fab
+      name: Message me on LinkedIn
+      link: 'https://linkedin.com/in/sindrewilting'
 
 design:
   columns: '1'

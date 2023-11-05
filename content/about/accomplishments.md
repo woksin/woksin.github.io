@@ -23,14 +23,32 @@ date_format: Jan 2006
 #   Leave other parameters empty if not required.
 #   Begin multi-line descriptions with YAML's `|2-` multi-line prefix.
 item:
-  # - certificate_url: https://www.coursera.org
-  #   date_end: ''
-  #   date_start: '2021-01-25'
-  #   description: ''
-  #   organization: Coursera
-  #   organization_url: https://www.coursera.org
-  #   title: Neural Networks and Deep Learning
-  #   url: ''
+  - certificate_url: https://www.coursera.org/account/accomplishments/certificate/4GXAS9J582UX
+    date_end: '2023-04-01'
+    date_start: '2023-04-01'
+    description: ''
+    organization: Coursera
+    organization_url: https://www.coursera.org
+    title: Microsoft Azure Services and Lifecycles
+    url: ''
+  
+  - certificate_url: https://www.coursera.org/account/accomplishments/certificate/YHYXFCBQ45T4
+    date_end: '2023-04-01'
+    date_start: '2023-04-01'
+    description: ''
+    organization: Coursera
+    organization_url: https://www.coursera.org
+    title: Microsoft Azure Management Tools and Security Solutions
+    url: ''
+  
+  - certificate_url: https://www.coursera.org/account/accomplishments/certificate/MA776BHVW5XV
+    date_end: '2023-03-01'
+    date_start: '2023-03-01'
+    description: ''
+    organization: Coursera
+    organization_url: https://www.coursera.org
+    title: Introduction to Microsoft Azure Cloud Services
+    url: ''
   # - certificate_url: https://www.edx.org
   #   date_end: ''
   #   date_start: '2021-01-01'

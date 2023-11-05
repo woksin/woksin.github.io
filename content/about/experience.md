@@ -22,6 +22,20 @@ date_format: Jan 2006
 #   Leave `date_end` empty if it's your current employer.
 #   Begin multi-line descriptions with YAML's `|2-` multi-line prefix.
 experience:
+  - title: Senior Systems Developer
+    company: Stacc
+    company_url: 'https://stacc.com'
+    company_logo: org_stacc
+    location: Oslo, Norway
+    date_start: '2023-08-01'
+    date_end:
+    description: |2-
+        Some Text:
+        
+        * Items
+        * Items
+        * s
+  
   - title: Software Engineer
     company: DNV - Veracity
     company_url: 'https://veracity.com'
@@ -42,6 +56,24 @@ experience:
     location: Oslo, Norway
     date_start: '2018-07-01'
     date_end: '2023-03-01'
+    description: Some text
+  
+  - title: Software Development Consultant
+    company: Norwegian Red Cross
+    company_url: 'https://www.rodekors.no/en/'
+    company_logo: org_redcross
+    location: Oslo, Norway
+    date_start: '2018-04-01'
+    date_end: '2023-06-01'
+    description: Some text
+
+  - title: IT Analyst
+    company: Nordkinn Asset Management
+    company_url: 'https://nordkinn.se'
+    company_logo: org_nordkinn
+    location: Oslo, Norway
+    date_start: '2018-03-01'
+    date_end: '2023-06-01'
     description: Some text
 
 design:

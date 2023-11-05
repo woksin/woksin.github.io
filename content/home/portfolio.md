@@ -28,12 +28,12 @@ content:
   filter_button:
     - name: All
       tag: '*'
-    # - name: Machine Learning
-    #   tag: ML
-    # - name: Computer Vision
-    #   tag: CV
-    # - name: NLP
-    #   tag: NLP
+    - name: .NET Projects
+      tag: "DOTNET"
+    - name: Event Sourcing
+      tag: ES
+    - name: Github Actions
+      tag: GHActions
 
 design:
   columns: '1'

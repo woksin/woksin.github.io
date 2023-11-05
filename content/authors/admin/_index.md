@@ -1,41 +1,32 @@
 ---
 # Display name
-title: Sindre Alstad Wilting (woksin)
+title: Sindre (woksin) Wilting
 
 # Is this the primary user of the site?
 superuser: true
 
 # Role/position
-role: ''
+role: 'Senior Software Engineer'
 
 # Status emoji
 status:
-  icon: ☕️
+  icon: 👨‍💻
 
 # Organizations/Affiliations
-#organizations:
-#- name: 腾讯
-#  url: ""
+organizations:
+  - name: Stacc
+    url: "https://stacc.com"
 
 # Short bio (displayed in user profile at end of posts)
-bio: Placeholder
+bio: Pragmatic software engineer with an extra interest in Event Sourcing
 
-#interests:
-#- Artificial Intelligence
-#- Computational Linguistics
-#- Information Retrieval
-
-#education:
-#  courses:
-#  - course: PhD in Artificial Intelligence
-#    institution: Stanford University
-#    year: 2012
-#  - course: MEng in Artificial Intelligence
-#    institution: Massachusetts Institute of Technology
-#    year: 2009
-#  - course: BSc in Artificial Intelligence
-#    institution: Massachusetts Institute of Technology
-#    year: 2008
+interests:
+  - Event Sourcing
+  - Event Driven Architecture
+  - Actor Systems
+  - Distributed Systems
+  - Functional Programming
+  - Continuous Delivery
 
 # Social/Academic Networking
 # For available icons, see: https://wowchemy.com/docs/getting-started/page-builder/#icons
@@ -45,27 +36,24 @@ social:
   - icon: envelope
     icon_pack: fas
     link: 'about/#contact' # For a direct email link, use "mailto:test@example.org".
-  # - icon: twitter
-  #   icon_pack: fab
-  #   link: https://twitter.com/wowchemy
-  # - icon: instagram
-  #   icon_pack: fab
-  #   link: https://instagram.com/geocushen
-# Uncomment below for Github link
-#- icon: github
-#  icon_pack: fab
-#  link: https://github.com/gcushen
-
-# Link to a PDF of your resume/CV from the About widget.
-# To enable, copy your resume/CV to `static/files/cv.pdf` and uncomment the lines below.
-# - icon: cv
-#   icon_pack: ai
-#   link: files/cv.pdf
+  - icon: twitter
+    icon_pack: fab
+    link: https://twitter.com/SindreWilting
+  - icon: linkedin
+    icon_pack: fab
+    link: https://www.linkedin.com/in/sindrewilting/
+  - icon: github
+    icon_pack: fab
+    link: https://github.com/woksin
 
 # Enter email to display Gravatar (if Gravatar enabled in Config)
-#email: ""
+email: "sindrewilting@gmail.com"
 ---
 
-Placeholder
+A passionate software developer, tinkerer and student of the broad field of software engineering and product development. Sindre's experience spans over several years and the many aspects of software and product development,
+everything between product inception to maintenance, operations and DevOps.
 
-<!-- {{< icon name="download" pack="fas" >}} {{< staticref "uploads/resume.pdf" "newtab" >}}Download{{< /staticref >}} my resumé as a PDF. -->
+Through years of working with different technologies, programming languages, paradigms and frameworks he's developed a profound love for exploration and learning in the fields of software engineering and technology.
+With an extra love for Domain Driven Design, Event Sourcing, Functional Programming and Continuous Delivery mindset it helps pave the way towards deeper understanding and better solutions.
+
+{{< icon name="download" pack="fas" >}} {{< staticref "uploads/resume.pdf" "newtab" >}}Download{{< /staticref >}} my resumé as a PDF.

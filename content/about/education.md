@@ -24,12 +24,21 @@ date_format: Jan 2006
 experience:
   - title: Bachelor Computer Science
     company: University of Oslo
-    company_url: ''
-    company_logo: org-x
-    location: Norway
+    company_url: 'https://www.uio.no/english/index.html'
+    company_logo: uio
+    location: Oslo, Norway
     date_start: '2015-08-01'
     date_end: '2018-06-01'
-    description: Some text
+    description: |2-
+        Picked subjects that I found the most fun and interesting.
+
+        Some of which being:
+        * Computer Architecture
+        * Information Security
+        * Operating System (Very fun since we got to plan and code an OS from scratch 🤓)
+        * Biologically Inspired Computing
+        * Functional Programming
+        * And even more fun stuff 😍 
 
 design:
   columns: '1'
