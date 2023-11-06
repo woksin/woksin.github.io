@@ -64,7 +64,7 @@ experience:
     company_logo: org_redcross
     location: Oslo, Norway
     date_start: '2018-04-01'
-    date_end: '2023-06-01'
+    date_end: '2018-06-01'
     description: Some text
 
   - title: IT Analyst
@@ -73,8 +73,21 @@ experience:
     company_logo: org_nordkinn
     location: Oslo, Norway
     date_start: '2018-03-01'
-    date_end: '2023-06-01'
+    date_end: '2018-06-01'
     description: Some text
+    
+  - title: Digital Volunteer Project - Software Development Core Team
+    company: Norwegian Red Cross
+    company_url: 'https://www.cbsrc.org'
+    company_logo: org_redcross
+    location: Oslo, Norway
+    date_start: '2018-02-01'
+    date_end: '2020-12-01'
+    description: |2-
+        Participated in a weekend Hackathon working on Norwegian Red Cross' CBS (Community Based Surveillance).
+        Became a Core-team member of the project helping with the technical solution on a more regular basis and also helped out during later hackathons that we arranged.
+        
+        In 2019 we also took the hackathon to Senegal where we over a course of 5 days worked on this project together with enthusiastic and skilled developers there. 
 
 design:
   columns: '1'
