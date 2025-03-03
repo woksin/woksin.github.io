@@ -1,6 +1,6 @@
 ---
 title: Extensions
-summary: Convenient extension libraries
+summary: Convenient extension libraries for .NET
 tags:
   - "DOTNET"
 date: 2023-01-01

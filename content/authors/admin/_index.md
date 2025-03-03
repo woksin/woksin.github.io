@@ -15,7 +15,7 @@ status:
 # Organizations/Affiliations
 organizations:
   - name: Stacc
-    url: "https://stacc.com"
+    url: "https://cratis.io"
 
 # Short bio (displayed in user profile at end of posts)
 bio: Pragmatic software engineer with an extra interest in Event Sourcing
