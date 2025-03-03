@@ -60,3 +60,5 @@ Beyond coding, I enjoy collaborating with stakeholders to shape product roadmaps
 Outside of work, I dedicate time to open-source contributions, watching talks and reading articles on software engineering.
 
 {{< icon name="download" pack="fas" >}} {{< staticref "uploads/resume.pdf" "newtab" >}}View{{< /staticref >}} my resumé as a PDF.
+
+{{< icon name="contact" pack="fas" >}} {{< staticref "about/#contact" >}}Get in touch{{< /staticref >}}

@@ -31,6 +31,10 @@ content:
       icon_pack: fab
       name: Message me on LinkedIn
       link: 'https://linkedin.com/in/sindrewilting'
+    - icon: github
+      icon_pack: fab
+      name: Follow me on GitHub
+      link: 'https://github.com/woksin'
 
 design:
   columns: '1'
