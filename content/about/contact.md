@@ -16,25 +16,25 @@ content:
   # Automatically link email and phone or display as text?
   autolink: true
 
-  # Email form provider
-  # form:
-  #   provider: netlify
-  #   formspree:
-  #     id:
-  #   netlify:
-  #     # Enable CAPTCHA challenge to reduce spam?
-  #     captcha: false
-  email: sindrewilting@gmail.com
+  email: sindre@everdeen.com
   phone: +47 414 80 655
   contact_links:
     - icon: linkedin
       icon_pack: fab
-      name: Message me on LinkedIn
+      name: Let's connect on LinkedIn
       link: 'https://linkedin.com/in/sindrewilting'
     - icon: github
       icon_pack: fab
       name: Follow me on GitHub
       link: 'https://github.com/woksin'
+    - icon: linkedin
+      icon_pack: fab
+      name: Follow Cratis on LinkedIn
+      link: 'https://linkedin.com/in/sindrewilting'
+    - icon: youtube
+      icon_pack: fab
+      name: Subscribe to Cratis on YouTube
+      link: 'https://linkedin.com/in/sindrewilting'
 
 design:
   columns: '1'
