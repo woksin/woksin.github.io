@@ -1,0 +1,400 @@
+---
+import { careerEvents } from '../data/site';
+import { project, formatMonth, yearsBetween, alsoText } from '../lib/career';
+import SectionHeader from './SectionHeader.astro';
+
+const total = careerEvents.length;
+const final = project(careerEvents);
+const pad = (n: number) => String(n).padStart(2, '0');
+const years = yearsBetween(final.shippingSince, final.clock);
+const icon = {
+  prev: 'M10 3 5 8l5 5',
+  next: 'M6 3l5 5-5 5',
+};
+---
+
+<section id="career" class="relative py-24 md:py-36" aria-labelledby="career-title" data-replay data-total={total}>
+  <div class="container-x">
+    <SectionHeader index="02" label="Event stream" title="Career, replayed from the event log." id="career-title">
+      <p class="mt-6 max-w-[60ch] text-lg text-fg-muted" data-reveal>
+        Every role, skill and organisation below is a projection, computed by folding these {total} events in order.
+        Scroll, scrub or press play to watch the state rebuild itself.
+      </p>
+    </SectionHeader>
+
+    <div class="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-12">
+      <!-- Projection -->
+      <div class="lg:order-2 lg:col-span-5">
+        <div class="lg:sticky lg:top-[calc(var(--nav-h)+1.5rem)]">
+          <div class="panel flex flex-col overflow-hidden lg:max-h-[calc(100svh-var(--nav-h)-5rem)]" data-reveal>
+            <div class="flex items-center justify-between gap-3 border-b border-line px-5 py-3.5">
+              <p class="font-mono text-sm">
+                <span class="text-fg-faint">Projection:</span> <span class="text-view">Sindre.Career</span>
+              </p>
+              <p class="font-mono text-xs text-fg-muted">
+                position <span class="text-fg tabular-nums" data-out="position">{pad(total)}</span><span class="text-fg-faint"> / {pad(total)}</span>
+              </p>
+            </div>
+            <div class="h-px bg-line" aria-hidden="true">
+              <div class="h-px origin-left bg-gradient-to-r from-event/40 to-event transition-transform duration-500 ease-[var(--ease-out-expo)]" data-out="progress" style="transform:scaleX(1)"></div>
+            </div>
+
+            <div class="flex min-h-0 flex-1 flex-col gap-6 p-5 md:p-6">
+              <div>
+                <p class="mb-2 font-mono text-[0.6875rem] tracking-wider text-fg-faint uppercase">Last applied</p>
+                <p class="flex flex-wrap items-baseline gap-x-2 font-mono text-sm">
+                  <span class="text-fg-faint" data-out="lastSeq">#{pad(total)}</span>
+                  <span class="text-event" data-out="lastType">{final.lastEvent?.type}</span>
+                  <span class="text-fg-faint" data-out="lastDate">{final.lastEvent && formatMonth(final.lastEvent.date)}</span>
+                </p>
+              </div>
+
+              <div>
+                <p class="mb-2 font-mono text-[0.6875rem] tracking-wider text-fg-faint uppercase">Current role</p>
+                <p class="font-display text-2xl leading-tight font-[620] tracking-[-0.02em]" data-out="role">{final.currentRole?.title ?? '—'}</p>
+                <p class="mt-1 text-sm text-fg-muted" data-out="roleOrg">
+                  {final.currentRole ? `${final.currentRole.org} · since ${formatMonth(final.currentRole.from)}` : 'No role yet'}
+                </p>
+                <p class="mt-1 text-sm text-fg-faint" data-out="roleAlso">{alsoText(final)}</p>
+              </div>
+
+              <div class="grid grid-cols-3 gap-px overflow-hidden rounded-xl border border-line bg-line">
+                <div class="bg-ink-900 p-3.5">
+                  <p class="font-display text-2xl font-[650] tabular-nums" data-out="years">{years.toFixed(1)}</p>
+                  <p class="mt-0.5 text-xs text-fg-muted">years in the field</p>
+                </div>
+                <div class="bg-ink-900 p-3.5">
+                  <p class="font-display text-2xl font-[650] tabular-nums text-command" data-out="affCount">{final.affiliations.length}</p>
+                  <p class="mt-0.5 text-xs text-fg-muted">organisations</p>
+                </div>
+                <div class="bg-ink-900 p-3.5">
+                  <p class="font-display text-2xl font-[650] tabular-nums text-view" data-out="skillCount">{final.skills.length}</p>
+                  <p class="mt-0.5 text-xs text-fg-muted">skills</p>
+                </div>
+              </div>
+
+              <div>
+                <p class="mb-2.5 font-mono text-[0.6875rem] tracking-wider text-fg-faint uppercase">Organisations</p>
+                <ul class="flex flex-wrap gap-1.5" data-out="affiliations">
+                  {final.affiliations.map((a) => <li class="chip chip-org" data-key={a}>{a}</li>)}
+                </ul>
+              </div>
+
+              <div class="flex min-h-0 flex-1 flex-col">
+                <p class="mb-2.5 font-mono text-[0.6875rem] tracking-wider text-fg-faint uppercase">Skill cloud</p>
+                <ul class="skills flex max-h-[13.5rem] min-h-[4rem] flex-wrap content-start gap-1.5 overflow-y-auto pr-1 lg:max-h-none lg:flex-1" data-out="skills">
+                  {final.skills.map((s) => <li class="chip" data-key={s}>{s}</li>)}
+                </ul>
+              </div>
+            </div>
+
+            <!-- Controls -->
+            <div class="flex items-center gap-2 border-t border-line bg-ink-950/40 px-4 py-3" role="group" aria-label="Replay controls" data-controls hidden>
+              <button type="button" class="ctl" data-action="prev" aria-label="Step back one event">
+                <svg viewBox="0 0 16 16" class="size-4" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d={icon.prev} stroke-linecap="round" stroke-linejoin="round"></path></svg>
+              </button>
+              <button type="button" class="ctl ctl-play" data-action="play" aria-label="Play replay" aria-pressed="false">
+                <svg viewBox="0 0 16 16" class="icon-play size-4" fill="currentColor" aria-hidden="true"><path d="M4.5 2.8v10.4a.6.6 0 0 0 .9.5l8.2-5.2a.6.6 0 0 0 0-1L5.4 2.3a.6.6 0 0 0-.9.5Z"></path></svg>
+                <svg viewBox="0 0 16 16" class="icon-pause size-4" fill="currentColor" aria-hidden="true"><rect x="3.5" y="2.5" width="3" height="11" rx=".8"></rect><rect x="9.5" y="2.5" width="3" height="11" rx=".8"></rect></svg>
+              </button>
+              <button type="button" class="ctl" data-action="next" aria-label="Step forward one event">
+                <svg viewBox="0 0 16 16" class="size-4" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d={icon.next} stroke-linecap="round" stroke-linejoin="round"></path></svg>
+              </button>
+              <label class="ml-2 flex min-w-0 flex-1 items-center">
+                <span class="sr-only">Stream position</span>
+                <input type="range" min="0" max={total} step="1" value={total} class="scrubber w-full" data-scrubber />
+              </label>
+              <span class="w-12 text-right font-mono text-xs text-fg-muted tabular-nums" data-out="positionShort" aria-hidden="true">{total}/{total}</span>
+            </div>
+          </div>
+          <p class="mt-3 hidden font-mono text-xs text-fg-faint lg:block" data-controls-hint hidden>
+            Tip: focus the replay and use <kbd class="kbd">←</kbd> <kbd class="kbd">→</kbd> to step.
+          </p>
+        </div>
+      </div>
+
+      <!-- Stream -->
+      <div class="lg:order-1 lg:col-span-7">
+        <!-- Compact HUD keeps the projection visible on small screens -->
+        <div class="hud sticky top-[calc(var(--nav-h)+0.5rem)] z-20 mb-6 lg:hidden" data-hud hidden>
+          <div class="panel flex items-center gap-2 overflow-hidden !bg-ink-900/95 px-3 py-2.5 shadow-2xl shadow-black/60">
+            <button type="button" class="ctl" data-action="prev" aria-label="Step back one event">
+              <svg viewBox="0 0 16 16" class="size-4" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d={icon.prev} stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </button>
+            <button type="button" class="ctl ctl-play" data-action="play" aria-label="Play replay" aria-pressed="false">
+              <svg viewBox="0 0 16 16" class="icon-play size-4" fill="currentColor" aria-hidden="true"><path d="M4.5 2.8v10.4a.6.6 0 0 0 .9.5l8.2-5.2a.6.6 0 0 0 0-1L5.4 2.3a.6.6 0 0 0-.9.5Z"></path></svg>
+              <svg viewBox="0 0 16 16" class="icon-pause size-4" fill="currentColor" aria-hidden="true"><rect x="3.5" y="2.5" width="3" height="11" rx=".8"></rect><rect x="9.5" y="2.5" width="3" height="11" rx=".8"></rect></svg>
+            </button>
+            <button type="button" class="ctl" data-action="next" aria-label="Step forward one event">
+              <svg viewBox="0 0 16 16" class="size-4" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d={icon.next} stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </button>
+            <div class="ml-1 min-w-0 flex-1 font-mono text-[0.6875rem] leading-4">
+              <p class="truncate"><span class="text-fg-faint" data-out="hudPos"></span> <span class="text-event" data-out="hudType"></span></p>
+              <p class="truncate text-fg-muted" data-out="hudRole"></p>
+            </div>
+            <div class="absolute inset-x-0 bottom-0 h-0.5 bg-line" aria-hidden="true">
+              <div class="h-full origin-left bg-event transition-transform duration-500" data-out="hudProgress"></div>
+            </div>
+          </div>
+        </div>
+
+        <ol class="stream relative" data-stream aria-label="Career events">
+          {
+            careerEvents.map((e) => (
+              <li class="event relative pb-3 pl-9 md:pl-12" data-seq={e.seq} data-state="applied">
+                <span class="rail" aria-hidden="true" />
+                <span class="node" aria-hidden="true" />
+                <article class="card glow relative rounded-2xl border border-transparent p-4 md:p-5">
+                  <h3 class="flex flex-wrap items-baseline gap-x-3 gap-y-1 font-mono text-xs">
+                    <button type="button" class="jump text-left" data-jump={e.seq} aria-label={`Replay to event ${e.seq}: ${e.type}, ${e.title}`}>
+                      <span class="text-fg-faint">#{pad(e.seq)}</span>
+                      <span class="ml-2 font-medium text-event">{e.type}</span>
+                    </button>
+                    <span class="text-fg-faint">
+                      <time datetime={e.date}>{formatMonth(e.date)}</time>
+                      {e.endDate && (
+                        <>
+                          {' – '}
+                          <time datetime={e.endDate}>{formatMonth(e.endDate)}</time>
+                        </>
+                      )}
+                    </span>
+                  </h3>
+                  <p class="mt-2.5 font-display text-xl leading-snug font-[620] tracking-[-0.015em] text-fg md:text-[1.4rem]">{e.title}</p>
+                  {e.org && (
+                    <p class="mt-1 text-sm text-fg-muted">
+                      {e.orgUrl ? (
+                        <a href={e.orgUrl} class="underline decoration-line-strong hover:text-fg hover:decoration-event" rel="noopener">
+                          {e.org}
+                        </a>
+                      ) : (
+                        e.org
+                      )}
+                      {e.location && <span class="text-fg-faint"> · {e.location}</span>}
+                    </p>
+                  )}
+                  <p class="mt-3 text-[0.95rem] leading-relaxed text-fg-muted">{e.summary}</p>
+                  {e.skills && (
+                    <ul class="mt-4 flex flex-wrap gap-1.5" aria-label="Skills">
+                      {e.skills.map((s) => (
+                        <li class="rounded-md border border-line px-2 py-0.5 font-mono text-[0.6875rem] text-fg-muted">+ {s}</li>
+                      ))}
+                    </ul>
+                  )}
+                </article>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <p class="sr-only" aria-live="polite" aria-atomic="true" data-live></p>
+</section>
+
+<style>
+  .rail {
+    position: absolute;
+    left: 0.6875rem;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: var(--color-line-strong);
+  }
+  .event:first-child .rail {
+    top: 1.75rem;
+  }
+  .event:last-child .rail {
+    bottom: auto;
+    height: 1.75rem;
+  }
+  @media (min-width: 768px) {
+    .rail {
+      left: 0.9375rem;
+    }
+  }
+  .node {
+    position: absolute;
+    left: calc(0.6875rem - 5px);
+    top: 1.5rem;
+    width: 11px;
+    height: 11px;
+    border-radius: 3px;
+    background: var(--color-ink-950);
+    border: 1px solid var(--color-line-strong);
+    transition: all 400ms var(--ease-out-expo);
+  }
+  @media (min-width: 768px) {
+    .node {
+      left: calc(0.9375rem - 5px);
+      top: 1.75rem;
+    }
+  }
+  .event[data-state='applied'] .node,
+  .event[data-state='current'] .node {
+    background: var(--color-event);
+    border-color: var(--color-event);
+  }
+  .event[data-state='current'] .node {
+    box-shadow: 0 0 0 4px rgb(255 138 61 / 0.18), 0 0 18px rgb(255 138 61 / 0.7);
+    transform: scale(1.15);
+  }
+  .event[data-state='applied'] .rail,
+  .event[data-state='current'] .rail {
+    background: linear-gradient(to bottom, rgb(255 138 61 / 0.55), rgb(255 138 61 / 0.25));
+  }
+  .event[data-state='current'] .rail {
+    background: linear-gradient(to bottom, rgb(255 138 61 / 0.55), var(--color-line-strong) 60%);
+  }
+  .card {
+    transition:
+      opacity 500ms var(--ease-out-expo),
+      background-color 400ms ease,
+      border-color 400ms ease;
+  }
+  .event[data-state='future'] .card {
+    opacity: 0.6;
+  }
+  .event[data-state='future'] .card:hover {
+    opacity: 0.85;
+  }
+  .event[data-state='current'] .card {
+    background: linear-gradient(180deg, rgb(255 138 61 / 0.07), rgb(255 138 61 / 0.015));
+    border-color: rgb(255 138 61 / 0.28);
+  }
+  :global(.js) .event .card {
+    cursor: pointer;
+  }
+  .jump::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 1rem;
+  }
+  .jump:focus-visible {
+    outline: none;
+  }
+  .jump:focus-visible::after {
+    outline: 2px solid var(--color-command);
+    outline-offset: 2px;
+  }
+  .card :global(a) {
+    position: relative;
+    z-index: 1;
+  }
+
+  .skills {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in srgb, var(--color-fg) 15%, transparent) transparent;
+  }
+  :global(.chip) {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 0.45rem;
+    border: 1px solid var(--color-line);
+    background: color-mix(in srgb, var(--color-fg) 2%, transparent);
+    padding: 0.2rem 0.5rem;
+    font-size: 0.75rem;
+    line-height: 1.1rem;
+    color: var(--color-fg-muted);
+    transition:
+      background-color 1.4s ease,
+      border-color 1.4s ease,
+      color 1.4s ease;
+  }
+  :global(.chip-org) {
+    color: var(--color-command-soft);
+    border-color: rgb(77 163 255 / 0.22);
+    background: rgb(77 163 255 / 0.05);
+  }
+  :global(.chip.is-new) {
+    animation: var(--animate-pop-in);
+    color: #fff;
+    border-color: rgb(255 138 61 / 0.6);
+    background: rgb(255 138 61 / 0.18);
+    transition: none;
+  }
+
+  .ctl {
+    display: inline-grid;
+    place-items: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    flex-shrink: 0;
+    border-radius: 0.6rem;
+    border: 1px solid var(--color-line);
+    color: var(--color-fg-muted);
+    transition: all 160ms ease;
+    cursor: pointer;
+  }
+  .ctl:hover {
+    color: var(--color-fg);
+    border-color: var(--color-line-strong);
+    background: color-mix(in srgb, var(--color-fg) 5%, transparent);
+  }
+  .ctl-play {
+    background: var(--color-event);
+    border-color: transparent;
+    color: #1a0d03;
+  }
+  .ctl-play:hover {
+    background: var(--color-event-soft);
+    color: #1a0d03;
+  }
+  .ctl-play .icon-pause,
+  .ctl-play[aria-pressed='true'] .icon-play {
+    display: none;
+  }
+  .ctl-play[aria-pressed='true'] .icon-pause {
+    display: block;
+  }
+
+  .scrubber {
+    appearance: none;
+    height: 1.5rem;
+    background: transparent;
+    cursor: pointer;
+    --fill: 100%;
+  }
+  .scrubber::-webkit-slider-runnable-track {
+    height: 4px;
+    border-radius: 99px;
+    background: linear-gradient(to right, var(--color-event) var(--fill), color-mix(in srgb, var(--color-fg) 10%, transparent) var(--fill));
+  }
+  .scrubber::-moz-range-track {
+    height: 4px;
+    border-radius: 99px;
+    background: linear-gradient(to right, var(--color-event) var(--fill), color-mix(in srgb, var(--color-fg) 10%, transparent) var(--fill));
+  }
+  .scrubber::-webkit-slider-thumb {
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    margin-top: -5px;
+    border-radius: 4px;
+    background: #fff;
+    box-shadow: 0 0 0 4px rgb(255 138 61 / 0.25);
+  }
+  .scrubber::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    border: 0;
+    border-radius: 4px;
+    background: #fff;
+    box-shadow: 0 0 0 4px rgb(255 138 61 / 0.25);
+  }
+  :global(html[data-theme='light']) .ctl-play,
+  :global(html[data-theme='light']) .ctl-play:hover {
+    color: #fff;
+  }
+</style>
+
+<script>
+  import { mountReplay } from '../scripts/replay';
+  import { onPageLoad } from '../lib/lifecycle';
+  onPageLoad(() => {
+    const root = document.querySelector<HTMLElement>('[data-replay]');
+    return root ? mountReplay(root) : undefined;
+  });
+</script>

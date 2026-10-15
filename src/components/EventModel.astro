@@ -1,0 +1,240 @@
+---
+import SectionHeader from './SectionHeader.astro';
+import { eventModel as m, type ModelCard, type ModelLane } from '../data/eventModel';
+
+// Fixed board geometry (px). The board scrolls horizontally when it does not fit.
+const COL = 156;
+const W = 132;
+const H = 66;
+const GUTTER = 20;
+const laneY: Record<ModelLane, number> = { ui: 34, middle: 150, chore: 266, member: 360 };
+const laneBand: Record<ModelLane, [number, number]> = { ui: [0, 116], middle: [116, 232], chore: [232, 332], member: [332, 440] };
+const width = GUTTER * 2 + m.columns * COL - (COL - W);
+const height = 440;
+
+const pos = (c: ModelCard) => ({ x: GUTTER + c.col * COL, y: laneY[c.lane] });
+const byId = new Map(m.cards.map((c) => [c.id, c]));
+
+const edges = m.edges.flatMap(([from, to]) => {
+  const a = byId.get(from);
+  const b = byId.get(to);
+  if (!a || !b) return [];
+  const pa = pos(a);
+  const pb = pos(b);
+  let d: string;
+  if (pa.y === pb.y) {
+    const y = pa.y + H / 2;
+    d = `M${pa.x + W},${y} C${pa.x + W + 14},${y} ${pb.x - 14},${y} ${pb.x - 4},${y}`;
+  } else {
+    const down = pb.y > pa.y;
+    const ax = pa.x + W / 2 + (pb.x > pa.x ? W * 0.18 : 0);
+    const ay = down ? pa.y + H : pa.y;
+    const bx = pb.x + W / 2 - (pb.x > pa.x ? W * 0.18 : 0);
+    const by = down ? pb.y - 4 : pb.y + H + 4;
+    const my = (ay + by) / 2;
+    d = `M${ax},${ay} C${ax},${my} ${bx},${my} ${bx},${by}`;
+  }
+  return [{ from, to, d }];
+});
+
+// Names never wrap mid-word: long ones get a smaller size that still fits the card.
+const nameSize = (name: string) => (name.length <= 14 ? 12 : name.length <= 17 ? 10.5 : 9.5);
+const kindLabel = { ui: 'Screen', command: 'Command', event: 'Event', view: 'Read model' } as const;
+const stepsFor = (id: string) => m.steps.flatMap((s, i) => (s.cards.includes(id) ? [i] : [])).join(' ');
+---
+
+<section id="model" class="relative py-24 md:py-36" aria-labelledby="model-title">
+  <div class="container-x">
+    <SectionHeader index="03" kind="command" label="How I think" title="Start with the event model." id="model-title">
+      <p class="mt-6 max-w-[62ch] text-lg leading-relaxed text-fg-muted">
+        Before code, I draw how information flows: screens send commands, commands append events, events feed read models, read models feed screens.
+        This is a real slice from <a href={m.repo} class="text-fg underline decoration-line-strong hover:decoration-fg" rel="noopener">Varde</a>, my family app,
+        and every name on it is a type in its source.
+      </p>
+    </SectionHeader>
+
+    <div class="panel overflow-hidden" data-reveal data-model>
+      <div class="flex flex-wrap items-center justify-between gap-3 border-b border-line px-5 py-3 md:px-7">
+        <p class="font-mono text-sm"><span class="text-fg-faint">EventModel:</span> <span class="text-command">{m.name}</span></p>
+        <div class="flex items-center gap-2">
+          <button type="button" class="btn btn-sm" data-model-play aria-pressed="false">
+            <svg viewBox="0 0 16 16" class="size-3.5" fill="currentColor" aria-hidden="true" data-icon-play><path d="M4 2.8v10.4a.6.6 0 0 0 .9.5l8.4-5.2a.6.6 0 0 0 0-1L4.9 2.3a.6.6 0 0 0-.9.5Z"></path></svg>
+            <svg viewBox="0 0 16 16" class="hidden size-3.5" fill="currentColor" aria-hidden="true" data-icon-pause><rect x="3.5" y="2.5" width="3" height="11" rx=".8"></rect><rect x="9.5" y="2.5" width="3" height="11" rx=".8"></rect></svg>
+            <span data-model-play-label>Play the flow</span>
+          </button>
+          <button type="button" class="btn btn-sm" data-model-reset hidden>Show all</button>
+        </div>
+      </div>
+
+      <div class="board-scroll overflow-x-auto" data-model-scroll>
+        <div class="board relative" style={`width:${width}px;height:${height}px`}>
+          {
+            m.lanes.map((l) => (
+              <div class="lane absolute inset-x-0" style={`top:${laneBand[l.id][0]}px;height:${laneBand[l.id][1] - laneBand[l.id][0]}px`} data-lane={l.id}>
+                <span class="absolute top-2 left-5 font-mono text-[0.625rem] tracking-[0.08em] text-fg-faint uppercase">{l.label}</span>
+              </div>
+            ))
+          }
+          <svg class="pointer-events-none absolute inset-0" width={width} height={height} viewBox={`0 0 ${width} ${height}`} aria-hidden="true">
+            <defs>
+              <marker id="model-arrow" viewBox="0 0 8 8" refX="6" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M0 0 8 4 0 8Z" fill="currentColor"></path>
+              </marker>
+            </defs>
+            {edges.map((e) => <path d={e.d} class="edge" data-from={e.from} data-to={e.to} marker-end="url(#model-arrow)"></path>)}
+          </svg>
+          <ol class="contents" aria-label={`Event model: ${m.name}`}>
+            {
+              m.cards.map((c) => {
+                const p = pos(c);
+                return (
+                  <li class="contents">
+                    <button
+                      type="button"
+                      class={`card card-${c.kind} absolute`}
+                      style={`left:${p.x}px;top:${p.y}px;width:${W}px;height:${H}px`}
+                      data-card={c.id}
+                      data-steps={stepsFor(c.id)}
+                      aria-describedby="model-detail"
+                    >
+                      <span class="block font-mono text-[0.5625rem] tracking-[0.06em] uppercase opacity-70">{kindLabel[c.kind]}</span>
+                      <span class="mt-1 block font-mono leading-tight font-medium whitespace-nowrap" style={`font-size:${nameSize(c.name)}px`}>{c.name}</span>
+                    </button>
+                  </li>
+                );
+              })
+            }
+          </ol>
+        </div>
+      </div>
+
+      <div class="grid gap-4 border-t border-line px-5 py-4 md:grid-cols-[1fr_auto] md:px-7">
+        <div id="model-detail" aria-live="polite" data-model-detail class="min-h-[4.5rem]">
+          <p class="font-mono text-xs text-fg-faint" data-model-detail-meta>Hover, focus or tap a card, or play the flow.</p>
+          <p class="mt-1 text-[0.95rem] leading-relaxed text-fg" data-model-detail-text>
+            {m.steps.length} steps, {m.cards.length} cards, two streams: chores are keyed by chore, completions by member.
+          </p>
+        </div>
+        <ol class="flex flex-wrap items-start gap-2 md:max-w-[22rem] md:justify-end" aria-label="Steps">
+          {
+            m.steps.map((s, i) => (
+              <li>
+                <button type="button" class="step" data-step={i} aria-pressed="false">
+                  <span class="text-fg-faint">{String(i + 1).padStart(2, '0')}</span> {s.title}
+                </button>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </div>
+    <script type="application/json" data-model-json set:html={JSON.stringify({ cards: m.cards.map(({ id, kind, name, source, note }) => ({ id, kind, name, source, note })), steps: m.steps, root: `${m.repo}/blob/main/${m.sourceRoot}` })} />
+  </div>
+</section>
+
+<style>
+  .board-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-line-strong) transparent;
+    mask-image: linear-gradient(90deg, transparent, #000 1.25rem, #000 calc(100% - 1.25rem), transparent);
+  }
+  .board {
+    margin-inline: auto;
+  }
+  .lane + .lane {
+    border-top: 1px dashed var(--color-line);
+  }
+  .lane[data-lane='chore'],
+  .lane[data-lane='member'] {
+    background: color-mix(in oklab, var(--color-event) 3%, transparent);
+  }
+  .edge {
+    fill: none;
+    stroke: var(--color-line-strong);
+    stroke-width: 1.25;
+    color: var(--color-line-strong);
+    transition: stroke 300ms ease, opacity 300ms ease;
+  }
+  .card {
+    --c: var(--color-fg-muted);
+    border-radius: 0.6rem;
+    border: 1px solid color-mix(in oklab, var(--c) 45%, transparent);
+    background: color-mix(in oklab, var(--c) 12%, var(--color-ink-900));
+    color: color-mix(in oklab, var(--c) 80%, var(--color-fg));
+    padding: 0.55rem 0.7rem;
+    text-align: left;
+    cursor: pointer;
+    transition:
+      opacity 300ms ease,
+      transform 300ms var(--ease-out-expo),
+      box-shadow 300ms ease,
+      border-color 300ms ease;
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0.5rem;
+    right: 0.6rem;
+    width: 0.6rem;
+    height: 3px;
+    border-radius: 2px;
+    background: var(--c);
+  }
+  .card-command { --c: var(--color-command); }
+  .card-event { --c: var(--color-event); }
+  .card-view { --c: var(--color-view); }
+  .card-ui {
+    --c: var(--color-fg-muted);
+    background: color-mix(in oklab, var(--color-fg) 4%, var(--color-ink-900));
+    border-style: dashed;
+  }
+  [data-focus] .card:not([data-lit]) {
+    opacity: 0.28;
+  }
+  [data-focus] .edge:not([data-lit]) {
+    opacity: 0.25;
+  }
+  .card[data-lit] {
+    border-color: var(--c);
+    box-shadow: 0 0 0 1px color-mix(in oklab, var(--c) 35%, transparent), 0 12px 32px -12px color-mix(in oklab, var(--c) 60%, transparent);
+    transform: translateY(-2px);
+  }
+  .edge[data-lit] {
+    stroke: var(--color-event);
+    color: var(--color-event);
+  }
+  :global(.js-motion) .edge[data-lit] {
+    stroke-dasharray: 5 5;
+    animation: flow 900ms linear infinite;
+  }
+  @keyframes flow {
+    to {
+      stroke-dashoffset: -20;
+    }
+  }
+  .step {
+    border-radius: 999px;
+    border: 1px solid var(--color-line);
+    padding: 0.25rem 0.7rem;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    color: var(--color-fg-muted);
+    cursor: pointer;
+    transition: color 150ms ease, border-color 150ms ease, background-color 150ms ease;
+  }
+  .step:hover {
+    color: var(--color-fg);
+    border-color: var(--color-line-strong);
+  }
+  .step[aria-pressed='true'] {
+    color: var(--color-fg);
+    border-color: color-mix(in oklab, var(--color-event) 55%, transparent);
+    background: color-mix(in oklab, var(--color-event) 10%, transparent);
+  }
+</style>
+
+<script>
+  import { initEventModel } from '../scripts/event-model';
+  import { onPageLoad } from '../lib/lifecycle';
+  onPageLoad(initEventModel);
+</script>

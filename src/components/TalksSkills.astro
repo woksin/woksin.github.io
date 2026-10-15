@@ -1,0 +1,78 @@
+---
+import { talks, community, skills } from '../data/site';
+import { formatMonth } from '../lib/career';
+
+const talksNewest = [...talks].sort((a, b) => b.date.localeCompare(a.date));
+const day = (d: string) => new Date(`${d}T00:00:00Z`).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
+import SectionHeader from './SectionHeader.astro';
+
+const groups = Object.entries(skills);
+const accents = ['bg-event', 'bg-command', 'bg-view', 'bg-event', 'bg-command', 'bg-view'];
+---
+
+<section id="talks" class="relative py-24 md:py-32" aria-labelledby="talks-title">
+  <div class="container-x grid grid-cols-1 items-start gap-x-12 lg:grid-cols-12">
+    <div class="lg:sticky lg:top-[calc(var(--nav-h)+2rem)] lg:col-span-5 [&>header]:mb-10 lg:[&>header]:mb-0">
+      <SectionHeader index="09" label="TalkGiven" title="Talks & community." id="talks-title" />
+    </div>
+    <div class="grid gap-4 lg:col-span-7">
+      <ul class="grid grid-cols-1 gap-4">
+        {
+          talksNewest.map((t) => (
+            <li data-reveal>
+              <a href={t.url} rel="noopener" class="panel glow group flex h-full flex-col gap-4 p-6 md:p-7">
+                <span class="flex flex-wrap items-center justify-between gap-2 font-mono text-xs text-fg-faint">
+                  <span class="note">TalkGiven</span>
+                  <span><time datetime={t.date}>{day(t.date)}</time> · in Norwegian</span>
+                </span>
+                <span lang={t.lang} class="font-display text-2xl leading-tight font-[640] tracking-[-0.02em] transition-colors group-hover:text-event-soft md:text-[1.75rem]">{t.title}</span>
+                <span class="text-fg-muted">{t.summary}</span>
+                <span class="mt-auto flex flex-wrap items-center gap-x-2 gap-y-1 pt-2 text-sm text-fg-muted">
+                  <svg viewBox="0 0 16 16" class="size-4 text-event" fill="currentColor" aria-hidden="true"><path d="M5 3.5v9a.5.5 0 0 0 .77.42l7-4.5a.5.5 0 0 0 0-.84l-7-4.5A.5.5 0 0 0 5 3.5Z" /></svg>
+                  Watch · {t.host}
+                  <span class="text-fg-faint">· with {t.with}</span>
+                </span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <div class="panel p-5 md:px-7" data-reveal>
+        <p class="note note-view">Community</p>
+        <ul class="mt-3 divide-y divide-line">
+          {
+            community.map((c) => (
+              <li class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 py-2.5">
+                <span class="text-fg">{c.title}{c.detail && <span class="text-fg-muted"> · {c.detail}</span>}</span>
+                <span class="font-mono text-xs text-fg-faint">attended · {formatMonth(c.date)}</span>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="skills" class="relative pb-24 md:pb-36" aria-labelledby="skills-title">
+  <div class="container-x">
+    <SectionHeader index="10" kind="view" label="Read model" title="The toolbox." id="skills-title" />
+    <div class="grid grid-cols-1 gap-px overflow-hidden rounded-[1.25rem] border border-line bg-line sm:grid-cols-2 lg:grid-cols-3">
+      {
+        groups.map(([group, list], i) => (
+          <div class="bg-ink-950 p-6 md:p-7" data-reveal style={`--reveal-delay:${(i % 3) * 60}ms`}>
+            <h3 class="mb-4 flex items-center gap-2.5 font-mono text-xs tracking-wider text-fg-muted uppercase">
+              <span class={`size-2 rounded-[2px] ${accents[i % accents.length]}`} aria-hidden="true" />
+              {group}
+            </h3>
+            <ul class="flex flex-wrap gap-1.5">
+              {list.map((s) => (
+                <li class="tag">{s}</li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>

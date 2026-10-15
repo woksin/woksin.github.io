@@ -1,0 +1,37 @@
+{
+  "name": "woksin.com",
+  "type": "module",
+  "version": "2026.0.0",
+  "private": true,
+  "description": "Portfolio and CV of Sindre Wilting, rendered as projections of an event stream.",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "fetch:github": "node scripts/fetch-github.mjs",
+    "fetch:blog": "node scripts/fetch-blog.mjs",
+    "prebuild": "node scripts/fetch-github.mjs && node scripts/fetch-blog.mjs",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.7.4",
+    "@fontsource-variable/bricolage-grotesque": "^5.3.0",
+    "@fontsource-variable/inter": "^5.3.0",
+    "@fontsource-variable/jetbrains-mono": "^5.3.0",
+    "@tailwindcss/vite": "^4.3.3",
+    "astro": "^5.18.2",
+    "tailwindcss": "^4.3.3"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "sharp": "^0.35.5",
+    "typescript": "^6.0.3"
+  },
+  "overrides": {
+    "vite": "^6.4.4"
+  }
+}

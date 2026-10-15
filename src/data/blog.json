@@ -1,0 +1,389 @@
+{
+  "fetchedAt": "2026-10-15T21:09:48.539Z",
+  "source": "https://blog.cratis.io/authors/sindre-alstad-wilting/",
+  "posts": [
+    {
+      "title": "Getting started with Cratis: templates, samples and tools · Script to stage, Part 26",
+      "url": "https://blog.cratis.io/getting-started-with-cratis/",
+      "date": "2026-09-30T09:26:00.000Z",
+      "minutes": 21,
+      "description": "From an empty folder to a running Cratis application with dotnet new cratis or cratis new, the samples and what each leaves out, and the smaller tools around the stack: Fundamentals, Specifications, Synopsis, Narrator, Lens and the docs. It closes with where to start and the full series index.",
+      "tags": [
+        "templates",
+        "samples",
+        "fundamentals",
+        "specifications",
+        "synopsis",
+        "narrator"
+      ]
+    },
+    {
+      "title": "AI across the Cratis stack: corpus, CLI and MCP · Script to stage, Part 25",
+      "url": "https://blog.cratis.io/ai-across-the-cratis-stack/",
+      "date": "2026-09-30T09:25:00.000Z",
+      "minutes": 14,
+      "description": "Where an assistant meets Cratis: the AI corpus and its hooks, the CLI's effect labels, Chronicle MCP, Screenplay MCP and the docs assistant. What each one lets an assistant read, propose or change, and the checks that run whether it listened or not.",
+      "tags": [
+        "ai",
+        "mcp",
+        "cli",
+        "chronicle",
+        "screenplay"
+      ]
+    },
+    {
+      "title": "Cratis Direct: an agentic development life cycle · Script to stage, Part 24",
+      "url": "https://blog.cratis.io/cratis-direct-agentic-development-life-cycle/",
+      "date": "2026-09-30T09:24:00.000Z",
+      "minutes": 11,
+      "description": "How a person admits agent work in Cratis Direct, what each gate records, and who merges the pull request. The control plane we run our own engineering on, followed through one issue, and where it stops.",
+      "tags": [
+        "cratis-direct",
+        "agents",
+        "ai",
+        "engineering",
+        "chronicle"
+      ]
+    },
+    {
+      "title": "Cratis Studio: event modeling for the whole team · Script to stage, Part 23",
+      "url": "https://blog.cratis.io/cratis-studio-event-modeling-together/",
+      "date": "2026-09-30T09:23:00.000Z",
+      "minutes": 11,
+      "description": "A shared board and canvas where people and AI agents work on the same event model, Screenplay text you can diff, and opt-in code for one slice in your own repository. What Cratis Studio does at each step, and where each step stops.",
+      "tags": [
+        "cratis-studio",
+        "event-modeling",
+        "screenplay",
+        "stage",
+        "ai"
+      ]
+    },
+    {
+      "title": "Prologue: a first event model of an existing system · Script to stage, Part 22",
+      "url": "https://blog.cratis.io/prologue-a-first-model-of-an-existing-system/",
+      "date": "2026-09-30T09:22:00.000Z",
+      "minutes": 12,
+      "description": "Prologue stands beside a running system, records the metadata of what it does, and proposes a Screenplay model for a person to correct. What it watches, what it never records, how it groups what it sees, and what a language model may and may not change.",
+      "tags": [
+        "prologue",
+        "screenplay",
+        "event-modeling",
+        "cli",
+        "ai"
+      ]
+    },
+    {
+      "title": "Stage and Scene: generating code from an event model · Script to stage, Part 21",
+      "url": "https://blog.cratis.io/stage-and-scene-after-a-model-compiles/",
+      "date": "2026-09-30T09:21:00.000Z",
+      "minutes": 12,
+      "description": "Stage renders a narrow slice of a Screenplay model into C# on Arc and Chronicle, boots a throwaway sandbox and runs the model's examples, and refuses with a code whatever it can't express. Scene is the UI model between a screen in the model and React.",
+      "tags": [
+        "stage",
+        "scene",
+        "screenplay",
+        "event-modeling",
+        "arc",
+        "chronicle"
+      ]
+    },
+    {
+      "title": "Event modeling with Screenplay: a model you can compile · Script to stage, Part 20",
+      "url": "https://blog.cratis.io/screenplay-an-event-model-you-can-compile/",
+      "date": "2026-09-30T09:20:00.000Z",
+      "minutes": 13,
+      "description": "The .play language for writing an event model down next to the code, a compiler whose diagnostic codes don't change, personal data declared once on a value, and an MCP server that lets an assistant propose changes a person applies.",
+      "tags": [
+        "screenplay",
+        "event-modeling",
+        "cli",
+        "mcp",
+        "ai"
+      ]
+    },
+    {
+      "title": "Chronicle replay jobs, scale and performance · Script to stage, Part 19",
+      "url": "https://blog.cratis.io/chronicle-jobs-scale-and-performance/",
+      "date": "2026-09-30T09:19:00.000Z",
+      "minutes": 13,
+      "description": "Replays you can stop and resume, what a crash in the middle of one delivers twice, how events reach observers without making appends wait, and what running Chronicle on more than one node does and doesn't promise.",
+      "tags": [
+        "chronicle",
+        "operations",
+        "performance",
+        "clustering",
+        "event-sourcing"
+      ]
+    },
+    {
+      "title": "Running Chronicle in production: storage, security, backup · Script to stage, Part 18",
+      "url": "https://blog.cratis.io/running-chronicle-in-production/",
+      "date": "2026-09-30T09:18:00.000Z",
+      "minutes": 15,
+      "description": "What Chronicle's production image won't start without, how the storage choice changes where read models land, what a client trusts until you tell it otherwise, where a trace stops today, and the backup order that decides whether a restore can be read.",
+      "tags": [
+        "chronicle",
+        "operations",
+        "hosting",
+        "security",
+        "observability"
+      ]
+    },
+    {
+      "title": "The Cratis CLI: diagnose, workbench and llm-context · Script to stage, Part 17",
+      "url": "https://blog.cratis.io/the-cratis-cli/",
+      "date": "2026-09-30T09:17:00.000Z",
+      "minutes": 13,
+      "description": "A diagnostic summary that fails on a failed partition and not on lag, a full-screen terminal workbench for the box you reached over SSH, and a command catalog that tells an agent which commands change the server.",
+      "tags": [
+        "cli",
+        "chronicle",
+        "operations",
+        "ai",
+        "event-sourcing"
+      ]
+    },
+    {
+      "title": "Chronicle Workbench: a browser UI for your event store · Script to stage, Part 16",
+      "url": "https://blog.cratis.io/chronicle-workbench/",
+      "date": "2026-09-30T09:16:00.000Z",
+      "minutes": 11,
+      "description": "The Chronicle server serves its own browser tool on the port your clients already use. What each screen shows, how to follow a failed partition back to one author, and which screens can change a store.",
+      "tags": [
+        "chronicle",
+        "workbench",
+        "operations",
+        "event-sourcing"
+      ]
+    },
+    {
+      "title": "Arc gotchas: validation, proxy generation and naming conventions · Script to stage, Part 15",
+      "url": "https://blog.cratis.io/arc-gotchas/",
+      "date": "2026-09-30T09:15:00.000Z",
+      "minutes": 13,
+      "description": "Three places Arc's conventions make a decision you might not see: a validator that runs in the browser and on the server but not identically, a proxy folder the generator owns, and routes, event identities and mappings chosen by a name. What each one does, and the fix.",
+      "tags": [
+        "arc",
+        "proxy-generation",
+        "validation",
+        "chronicle",
+        "typescript"
+      ]
+    },
+    {
+      "title": "Event sourcing in year two: changes, replays and corrections · Script to stage, Part 14",
+      "url": "https://blog.cratis.io/four-changes-in-year-two/",
+      "date": "2026-09-30T09:14:00.000Z",
+      "minutes": 13,
+      "description": "A new event shape, a new view over old events, a correction to a stored fact and an observer stuck on one stream look alike, and they aren't. What each one changes in Chronicle, what the kernel works out on its own, and what an operator still decides.",
+      "tags": [
+        "chronicle",
+        "event-sourcing",
+        "migrations",
+        "replay",
+        "operations"
+      ]
+    },
+    {
+      "title": "Personal data in an event log: PII and crypto-shredding · Script to stage, Part 13",
+      "url": "https://blog.cratis.io/personal-data-in-an-event-log/",
+      "date": "2026-09-30T09:13:00.000Z",
+      "minutes": 16,
+      "description": "Chronicle erases a person by destroying their key. The events stay, their marked values read as empty, and the fence stops the key from coming back.",
+      "tags": [
+        "chronicle",
+        "arc",
+        "pii",
+        "privacy",
+        "event-sourcing"
+      ]
+    },
+    {
+      "title": "Event sourcing beyond .NET: Kotlin, Java, TypeScript, Elixir · Script to stage, Part 12",
+      "url": "https://blog.cratis.io/beyond-dotnet/",
+      "date": "2026-09-30T09:12:00.000Z",
+      "minutes": 16,
+      "description": "Chronicle has clients for .NET, Kotlin and Java, TypeScript and Elixir, and Arc has servers on ASP.NET Core, Spring Boot and, as a source preview, Node.js. What each one gives you today, which registry it comes from, and the defaults that still differ from .NET.",
+      "tags": [
+        "arc",
+        "chronicle",
+        "kotlin",
+        "typescript",
+        "elixir"
+      ]
+    },
+    {
+      "title": "Testing event-sourced apps with Arc and Chronicle · Script to stage, Part 11",
+      "url": "https://blog.cratis.io/testing-with-arc-and-chronicle/",
+      "date": "2026-09-30T09:11:00.000Z",
+      "minutes": 13,
+      "description": "Most specs in a Cratis application can call a method and compare the event it returns. What the in-process scenarios add on top, the ways a green spec proves nothing, and the few tests that still need a real Chronicle and a running host.",
+      "tags": [
+        "testing",
+        "arc",
+        "chronicle",
+        "specifications",
+        "event-sourcing"
+      ]
+    },
+    {
+      "title": "Multi-tenancy and identity with AuthProxy, Arc and Chronicle · Script to stage, Part 10",
+      "url": "https://blog.cratis.io/tenancy-and-identity-end-to-end/",
+      "date": "2026-09-30T09:10:00.000Z",
+      "minutes": 16,
+      "description": "AuthProxy signs the user in, picks a tenant and forwards it as x-cratis-tenant-id, the header Arc reads by default, and Chronicle turns the tenant into a namespace. Every hop from the edge to storage, what a missing tenant becomes at each one, and what stays yours to check.",
+      "tags": [
+        "tenancy",
+        "identity",
+        "authproxy",
+        "arc",
+        "chronicle"
+      ]
+    },
+    {
+      "title": "Cratis Components: the React layer for Arc · Script to stage, Part 9",
+      "url": "https://blog.cratis.io/cratis-components-the-react-layer/",
+      "date": "2026-09-30T09:09:00.000Z",
+      "minutes": 14,
+      "description": "The author list and the register dialog from the cratis template, built with Cratis Components 4. Which parts come from Components and which from Arc, how a field binds to a generated command, how a taken name gets back to the Name field, theming and renderer adapters, and where the library stops.",
+      "tags": [
+        "components",
+        "react",
+        "arc",
+        "typescript",
+        "frontend"
+      ]
+    },
+    {
+      "title": "Live queries and real-time React UIs with Arc · Script to stage, Part 8",
+      "url": "https://blog.cratis.io/live-uis-with-arc/",
+      "date": "2026-09-30T09:08:00.000Z",
+      "minutes": 16,
+      "description": "In Arc, a query that loads once and a query that keeps pushing results to React differ by one return type, given data that notifies on change. The whole path from a write to the screen, the transport underneath, the hook and its states, command dialogs, view models and live tables, and which hop is live and which is a snapshot.",
+      "tags": [
+        "arc",
+        "components",
+        "react",
+        "observable-queries",
+        "typescript"
+      ]
+    },
+    {
+      "title": "Validation in a CQRS app, from browser to event log · Script to stage, Part 7",
+      "url": "https://blog.cratis.io/validation-all-the-way-down/",
+      "date": "2026-09-30T09:07:00.000Z",
+      "minutes": 13,
+      "description": "Every place a rule can live in a Cratis application, from the rules copied into the browser to Chronicle's append. What each layer can and can't guarantee, why a taken author name is caught in only one of them, and which rejections find their way back to a form field.",
+      "tags": [
+        "validation",
+        "arc",
+        "chronicle",
+        "constraints",
+        "typescript"
+      ]
+    },
+    {
+      "title": "CQRS with Arc: commands and queries without the plumbing · Script to stage, Part 6",
+      "url": "https://blog.cratis.io/arc-commands-and-queries/",
+      "date": "2026-09-30T09:06:00.000Z",
+      "minutes": 14,
+      "description": "A command is a record with a Handle method and a query is a static method on the read model it returns. What Arc builds from those two shapes, in which order it checks a request, what reaches the generated TypeScript, and what stays the application's job.",
+      "tags": [
+        "arc",
+        "cqrs",
+        "dotnet",
+        "typescript",
+        "validation"
+      ]
+    },
+    {
+      "title": "Event sourcing constraints and concurrency at write time · Script to stage, Part 5",
+      "url": "https://blog.cratis.io/rules-that-hold-when-you-write/",
+      "date": "2026-09-30T09:05:00.000Z",
+      "minutes": 15,
+      "description": "Checking a read model before you append enforces nothing. Constraints, concurrency scopes, decision reads and Arc aggregates check at write time, and each reaches a different set of appends.",
+      "tags": [
+        "chronicle",
+        "arc",
+        "constraints",
+        "concurrency",
+        "event-sourcing"
+      ]
+    },
+    {
+      "title": "Reactors, webhooks and subscriptions: reacting to events · Script to stage, Part 4",
+      "url": "https://blog.cratis.io/reacting-to-facts/",
+      "date": "2026-09-30T09:04:00.000Z",
+      "minutes": 13,
+      "description": "Reactors, webhooks and outbox-to-inbox subscriptions carry what happened to whoever cares. A failing handler stops one partition, a reactor can return its follow-up facts, and a stable delivery id is what lets a side effect survive running twice.",
+      "tags": [
+        "chronicle",
+        "reactors",
+        "webhooks",
+        "subscriptions",
+        "event-sourcing"
+      ]
+    },
+    {
+      "title": "Projections and read models in Chronicle and Arc · Script to stage, Part 3",
+      "url": "https://blog.cratis.io/from-event-to-read-model/",
+      "date": "2026-09-30T09:03:00.000Z",
+      "minutes": 13,
+      "description": "One attribute turns AuthorRegistered into a list on a screen. Model-bound, fluent and PDL projections, reducers for when attributes can't say it, where read models are stored, how a live list learns about changes, and what Chronicle does when a projection changes or has to be rebuilt.",
+      "tags": [
+        "chronicle",
+        "arc",
+        "projections",
+        "read-models",
+        "event-sourcing"
+      ]
+    },
+    {
+      "title": "Inside Chronicle: how the event store appends events · Script to stage, Part 2",
+      "url": "https://blog.cratis.io/inside-chronicle/",
+      "date": "2026-09-30T09:02:00.000Z",
+      "minutes": 12,
+      "description": "Chronicle's append returns without waiting for a single projection. What the kernel does inside that call, how observers and partitions pick the event up afterwards, and what happens when one of them fails.",
+      "tags": [
+        "chronicle",
+        "event-sourcing",
+        "orleans",
+        "architecture"
+      ]
+    },
+    {
+      "title": "Events are facts: naming and shaping events · Script to stage, Part 1",
+      "url": "https://blog.cratis.io/events-are-facts/",
+      "date": "2026-09-30T09:01:00.000Z",
+      "minutes": 14,
+      "description": "An event records something that happened, and no event is taken out of the log afterwards. How to name and shape events that still read in five years, and what Chronicle stores with each one: a sequence number, its source, the operation it belonged to, who caused it and why.",
+      "tags": [
+        "chronicle",
+        "event-sourcing",
+        "event-modeling",
+        "arc"
+      ]
+    },
+    {
+      "title": "Event sourcing with Cratis: one feature from model to production · Script to stage",
+      "url": "https://blog.cratis.io/from-the-edge-to-the-event-log/",
+      "date": "2026-09-29T00:00:00.000Z",
+      "minutes": 25,
+      "description": "The sticky-note feature followed from its model to production, into year two and to agents writing its code, through every Cratis product this post names, with 26 more posts that take each one all the way down.",
+      "tags": [
+        "ecosystem",
+        "authproxy",
+        "arc",
+        "chronicle",
+        "cli",
+        "screenplay",
+        "cratis-studio",
+        "cratis-direct",
+        "event-sourcing",
+        "testing",
+        "ai"
+      ]
+    }
+  ]
+}

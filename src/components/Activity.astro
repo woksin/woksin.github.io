@@ -1,0 +1,177 @@
+---
+import SectionHeader from './SectionHeader.astro';
+import { github, snapshotDate } from '../lib/github';
+import { foldCalendar, formatDay, formatMonthLong } from '../lib/contributions';
+
+const fmt = new Intl.NumberFormat('en-US');
+const cal = foldCalendar(github.contributions.weeks);
+const total = github.contributions.total;
+const pad = cal.days[0]?.weekday ?? 0;
+
+// Month labels sit above the first week that contains the 1st of that month.
+const monthLabels: { week: number; label: string }[] = [];
+for (const d of cal.days) {
+  if (d.date.endsWith('-01') && d.week > 0) {
+    monthLabels.push({ week: d.week, label: new Date(`${d.date}T00:00:00Z`).toLocaleDateString('en-GB', { month: 'short', timeZone: 'UTC' }) });
+  }
+}
+
+const facts = [
+  { key: 'activeDays', value: `${cal.activeDays} / ${cal.days.length}` },
+  { key: 'longestStreak', value: `${cal.longest} days` },
+  { key: 'currentStreak', value: `${cal.current} days` },
+  { key: 'busiestDay', value: `${fmt.format(cal.busiest.count)} · ${formatDay(cal.busiest.date)}` },
+];
+const summary = `Contribution heatmap: ${fmt.format(total)} contributions between ${formatDay(cal.first)} and ${formatDay(cal.last)}, on ${cal.activeDays} of ${cal.days.length} days. Longest streak ${cal.longest} days. Busiest day ${formatDay(cal.busiest.date)} with ${fmt.format(cal.busiest.count)}.`;
+---
+
+<section id="activity" class="relative py-24 md:py-36" aria-labelledby="activity-title">
+  <div class="container-x">
+    <SectionHeader index="05" label="Event store" title="Every contribution, appended." id="activity-title">
+      <p class="mt-6 max-w-[60ch] text-lg leading-relaxed text-fg-muted">
+        My GitHub contribution calendar, re-projected as an event store: one partition per day, brighter means more events appended.
+        Captured when the site was built.
+      </p>
+    </SectionHeader>
+
+    <div class="panel overflow-hidden" data-reveal data-heatmap>
+      <div class="flex flex-wrap items-center justify-between gap-3 border-b border-line px-5 py-3.5 md:px-7">
+        <p class="font-mono text-sm">
+          <span class="text-fg-faint">EventStore:</span> <span class="text-event">github.com/{github.login}</span>
+          <span class="text-fg-faint">· partitioned by day</span>
+        </p>
+        <p class="font-mono text-xs text-fg-faint">snapshot taken <time datetime={github.fetchedAt}>{snapshotDate()}</time></p>
+      </div>
+
+      <div class="grid gap-8 p-5 md:p-7 xl:grid-cols-[1fr_15rem]">
+        <div class="min-w-0">
+          <p class="mb-6 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+            <span class="font-display text-[clamp(2.5rem,5vw,3.75rem)] leading-none font-[650] tracking-[-0.04em] text-event tabular-nums">{fmt.format(total)}</span>
+            <span class="text-fg-muted">events appended in the last year</span>
+          </p>
+
+          <div class="scroller -mx-1 overflow-x-auto px-1 pb-2" data-heatmap-scroll>
+            <div class="relative min-w-[40rem] pl-8" aria-hidden="true">
+              <div class="relative mb-1.5 h-4 font-mono text-[0.625rem] text-fg-faint">
+                {monthLabels.map((m) => <span class="absolute" style={`left: calc(${(m.week / cal.weekCount) * 100}%)`}>{m.label}</span>)}
+              </div>
+              <div class="absolute top-[1.375rem] left-0 grid h-[calc(100%-1.375rem)] grid-rows-7 font-mono text-[0.625rem] leading-none text-fg-faint">
+                {['', 'Mon', '', 'Wed', '', 'Fri', ''].map((d) => <span class="flex items-center">{d}</span>)}
+              </div>
+              <div class="hm" style={`--weeks:${cal.weekCount}`} data-heatmap-grid>
+                {Array.from({ length: pad }, () => <span class="pad"></span>)}
+                {cal.days.map((d, i) => <span class="c" data-l={d.level} data-d={d.date} data-n={d.count} style={`--w:${d.week}`} data-i={i}></span>)}
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4 flex flex-wrap items-center justify-between gap-4 font-mono text-[0.6875rem] text-fg-faint">
+            <span
+              class="focus-hint rounded-md"
+              tabindex="0"
+              role="group"
+              aria-label={`${summary} Use the arrow keys to read individual days.`}
+              aria-describedby="activity-table-caption"
+              data-heatmap-keys
+            >
+              <span aria-hidden="true">Focus here and use <kbd class="kbd">←</kbd><kbd class="kbd">→</kbd><kbd class="kbd">↑</kbd><kbd class="kbd">↓</kbd> to read days</span>
+            </span>
+            <span class="flex items-center gap-1.5" aria-hidden="true">
+              less
+              {[0, 1, 2, 3, 4].map((l) => <span class="c legend" data-l={l}></span>)}
+              more
+            </span>
+          </div>
+          <p class="sr-only" aria-live="polite" data-heatmap-live></p>
+        </div>
+
+        <dl class="grid grid-cols-2 content-start gap-px overflow-hidden rounded-xl border border-line bg-line xl:grid-cols-1">
+          {
+            facts.map((f) => (
+              <div class="bg-ink-900 px-4 py-3">
+                <dt class="font-mono text-[0.6875rem] text-fg-faint">{f.key}</dt>
+                <dd class="mt-1 text-sm text-fg tabular-nums">{f.value}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+
+      <table class="sr-only">
+        <caption id="activity-table-caption">Contributions per month</caption>
+        <thead><tr><th scope="col">Month</th><th scope="col">Contributions</th></tr></thead>
+        <tbody>
+          {cal.months.map((m) => <tr><th scope="row">{formatMonthLong(m.month)}</th><td>{fmt.format(m.total)}</td></tr>)}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="hm-tip" role="presentation" data-heatmap-tip hidden></div>
+</section>
+
+<style>
+  .hm {
+    display: grid;
+    grid-template-rows: repeat(7, 1fr);
+    grid-template-columns: repeat(var(--weeks), 1fr);
+    grid-auto-flow: column;
+    gap: 3px;
+  }
+  .c {
+    aspect-ratio: 1;
+    border-radius: 2.5px;
+    background: var(--hm-0);
+    transition: background-color 500ms var(--ease-out-expo), box-shadow 200ms ease;
+  }
+  .c.legend {
+    width: 0.7rem;
+  }
+  .c[data-l='1'] { background: var(--hm-1); }
+  .c[data-l='2'] { background: var(--hm-2); }
+  .c[data-l='3'] { background: var(--hm-3); }
+  .c[data-l='4'] { background: var(--hm-4); box-shadow: 0 0 8px color-mix(in oklab, var(--color-event) 35%, transparent); }
+  .c[data-on] {
+    outline: 1.5px solid var(--color-fg);
+    outline-offset: 1px;
+  }
+  [data-heatmap] {
+    --hm-0: color-mix(in oklab, var(--color-fg) 6%, transparent);
+    --hm-1: color-mix(in oklab, var(--color-event) 28%, transparent);
+    --hm-2: color-mix(in oklab, var(--color-event) 50%, transparent);
+    --hm-3: color-mix(in oklab, var(--color-event) 75%, transparent);
+    --hm-4: var(--color-event);
+  }
+  /* Partitions fill in left to right on first view. */
+  :global(.js-motion) [data-heatmap]:not(.filled) .hm .c {
+    background: var(--hm-0);
+    box-shadow: none;
+  }
+  :global(.js-motion) [data-heatmap].filled .hm .c {
+    transition-delay: calc(var(--w) * 14ms);
+  }
+  .hm-tip {
+    position: fixed;
+    z-index: 70;
+    pointer-events: none;
+    transform: translate(-50%, calc(-100% - 10px));
+    padding: 0.35rem 0.6rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--color-line-strong);
+    background: var(--color-ink-800);
+    color: var(--color-fg);
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    white-space: nowrap;
+    box-shadow: 0 10px 30px -10px rgb(0 0 0 / 0.5);
+  }
+  .scroller {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-line-strong) transparent;
+  }
+</style>
+
+<script>
+  import { initHeatmap } from '../scripts/heatmap';
+  import { onPageLoad } from '../lib/lifecycle';
+  onPageLoad(initHeatmap);
+</script>

@@ -1,0 +1,82 @@
+---
+import { stats as siteStats, cratis } from '../data/site';
+import { github, mergedPrFloor } from '../lib/github';
+
+const rankOne = cratis.repos.filter((r) => r.rank === 1).length;
+const live: Record<string, (s: (typeof siteStats)[number]) => Partial<(typeof siteStats)[number]>> = {
+  // Floored to hundreds so the "+" stays true between daily builds.
+  contributionsLastYear: () => (github.contributions.total ? { value: Math.floor(github.contributions.total / 100) * 100 } : {}),
+  cratisMergedPrs: () => ({ value: mergedPrFloor }),
+  cratisRankOne: () => ({ label: `committer on ${rankOne} Cratis repositories` }),
+  chronicleLanguages: () => ({ value: cratis.clientLanguages.length }),
+};
+const stats = siteStats.map((s) => ({ ...s, ...(live[s.live]?.(s) ?? {}) }));
+const fmt = new Intl.NumberFormat('en-US');
+const accents = ['text-event', 'text-command', 'text-view', 'text-fg'];
+---
+
+<section aria-label="By the numbers" class="relative border-y border-line bg-ink-900">
+  <div class="container-x">
+    <dl class="grid grid-cols-2 gap-px bg-line lg:grid-cols-4">
+      {
+        stats.map((s, i) => {
+          const plain = 'plain' in s && s.plain === true;
+          return (
+            <div
+              class="flex flex-col gap-3 bg-ink-900 px-5 py-10 first:pl-0 md:px-10 md:py-14 [&:nth-child(3)]:pl-0 lg:[&:nth-child(3)]:pl-10"
+              data-reveal
+              style={`--reveal-delay:${i * 80}ms`}
+            >
+              <dt class="order-2 max-w-[18ch] text-sm leading-snug text-fg-muted">{s.label}</dt>
+              <dd class={`order-1 font-display text-[clamp(2.5rem,5vw,4rem)] leading-none font-[650] tracking-[-0.04em] tabular-nums ${accents[i % accents.length]}`}>
+                {s.prefix}<span data-count={plain ? undefined : s.value}>{plain ? s.value : fmt.format(s.value)}</span>
+                {s.suffix && <span class="text-fg-faint">{s.suffix}</span>}
+              </dd>
+            </div>
+          );
+        })
+      }
+    </dl>
+  </div>
+</section>
+
+<script>
+  import { motionReduced } from '../lib/motion';
+  import { onPageLoad } from '../lib/lifecycle';
+  onPageLoad(() => {
+    const fmt = new Intl.NumberFormat('en-US');
+    const els = document.querySelectorAll<HTMLElement>('[data-count]');
+    if (!motionReduced() && 'IntersectionObserver' in window) {
+      const run = (el: HTMLElement) => {
+        const target = Number(el.dataset['count']);
+        const duration = 1600;
+        const start = performance.now();
+        const step = (ts: number) => {
+          const p = Math.min(1, (ts - start) / duration);
+          const eased = 1 - Math.pow(1 - p, 4);
+          el.textContent = fmt.format(Math.round(target * eased));
+          if (p < 1 && !motionReduced()) requestAnimationFrame(step);
+          else el.textContent = fmt.format(target);
+        };
+        requestAnimationFrame(step);
+      };
+      const io = new IntersectionObserver(
+        (entries) => {
+          for (const e of entries) {
+            if (!e.isIntersecting) continue;
+            io.unobserve(e.target);
+            run(e.target as HTMLElement);
+          }
+        },
+        { threshold: 0.6 },
+      );
+      els.forEach((el) => {
+        // Reserve the final width so counting never shifts layout.
+        el.style.display = 'inline-block';
+        el.style.minWidth = `${el.getBoundingClientRect().width}px`;
+        el.textContent = '0';
+        io.observe(el);
+      });
+    }
+  });
+</script>

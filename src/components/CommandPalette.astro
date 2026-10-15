@@ -1,0 +1,111 @@
+---
+---
+
+<dialog class="palette" data-palette aria-label="Command palette" transition:persist="palette">
+  <div class="sheet panel overflow-hidden">
+    <div class="flex items-center gap-3 border-b border-line px-4">
+      <svg viewBox="0 0 20 20" class="size-4 shrink-0 text-fg-faint" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+        <circle cx="9" cy="9" r="5.5"></circle><path d="m13.2 13.2 3.3 3.3" stroke-linecap="round"></path>
+      </svg>
+      <input
+        type="text"
+        class="h-14 min-w-0 flex-1 bg-transparent text-base text-fg placeholder:text-fg-faint focus:outline-none"
+        placeholder="Type a command or search…"
+        role="combobox"
+        aria-expanded="true"
+        aria-controls="palette-list"
+        aria-autocomplete="list"
+        aria-label="Search commands"
+        autocomplete="off"
+        spellcheck="false"
+        data-palette-input
+      />
+      <button type="button" class="kbd cursor-pointer" data-palette-close aria-label="Close command palette">esc</button>
+    </div>
+    <ul id="palette-list" role="listbox" aria-label="Commands" class="max-h-[min(60vh,26rem)] overflow-y-auto p-2" data-palette-list></ul>
+    <div class="flex items-center justify-between gap-4 border-t border-line px-4 py-2.5 font-mono text-[0.6875rem] text-fg-faint">
+      <span class="flex items-center gap-1.5"><kbd class="kbd">↑</kbd><kbd class="kbd">↓</kbd> navigate <kbd class="kbd ml-2">↵</kbd> run</span>
+      <span class="hidden sm:inline">woksin.com</span>
+    </div>
+  </div>
+</dialog>
+
+<style>
+  .palette {
+    position: fixed;
+    inset: 0;
+    margin: 0;
+    padding: 12vh 1rem 1rem;
+    width: 100%;
+    max-width: none;
+    height: 100%;
+    max-height: none;
+    background: transparent;
+    color: inherit;
+    border: 0;
+  }
+  .palette:not([open]) {
+    display: none;
+  }
+  .palette::backdrop {
+    background: rgb(4 5 7 / 0.6);
+    backdrop-filter: blur(6px);
+  }
+  .sheet {
+    margin-inline: auto;
+    max-width: 38rem;
+    background: color-mix(in srgb, var(--color-ink-900) 92%, transparent);
+    box-shadow:
+      inset 0 1px 0 color-mix(in srgb, var(--color-fg) 6%, transparent),
+      0 50px 120px -20px rgb(0 0 0 / 0.8),
+      0 0 0 1px color-mix(in srgb, var(--color-fg) 4%, transparent);
+  }
+  :global(.js-motion) .palette[open] .sheet {
+    animation: sheet-in 260ms var(--ease-out-expo);
+  }
+  @keyframes sheet-in {
+    from {
+      opacity: 0;
+      transform: translateY(-8px) scale(0.98);
+    }
+  }
+  .palette :global([role='option']) {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.6rem 0.75rem;
+    border-radius: 0.65rem;
+    cursor: pointer;
+    font-size: 0.9375rem;
+    color: var(--color-fg-muted);
+  }
+  .palette :global([role='option'][aria-selected='true']) {
+    background: color-mix(in srgb, var(--color-fg) 6%, transparent);
+    color: var(--color-fg);
+  }
+  .palette :global(.grp) {
+    padding: 0.75rem 0.75rem 0.35rem;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-fg-faint);
+  }
+  .palette :global(.sw) {
+    width: 0.55rem;
+    height: 0.55rem;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+  .palette :global(.hint) {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    color: var(--color-fg-faint);
+  }
+</style>
+
+<script>
+  import { mountPalette } from '../scripts/palette';
+  mountPalette();
+</script>

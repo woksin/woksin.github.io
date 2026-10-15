@@ -1,0 +1,37 @@
+---
+import Base from '../layouts/Base.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import { person } from '../data/site';
+---
+
+<Base title={`EventNotFound · ${person.name}`} description="This page is not in the event stream." noindex>
+  <Nav slot="nav" home={false} />
+  <section class="relative isolate flex min-h-[100svh] items-center overflow-hidden pt-[var(--nav-h)]">
+    <div class="pointer-events-none absolute inset-0 -z-10" aria-hidden="true">
+      <div class="absolute top-1/2 left-1/2 size-[40rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-event/10 blur-[120px]"></div>
+    </div>
+    <div class="container-x py-24">
+      <div class="panel max-w-2xl overflow-hidden">
+        <div class="flex items-center justify-between border-b border-line px-6 py-3.5 font-mono text-xs">
+          <span class="note">Event</span>
+          <span class="text-fg-faint">stream position <span class="text-event">-1</span></span>
+        </div>
+        <div class="p-6 md:p-10">
+          <p class="font-mono text-sm text-fg-faint">HTTP 404</p>
+          <h1 class="mt-3 text-[clamp(2.5rem,7vw,4.75rem)] leading-[0.95] font-[680] tracking-[-0.03em] text-event-soft">EventNotFound</h1>
+          <p class="mt-5 max-w-[46ch] text-lg text-fg-muted">
+            Nothing was ever appended at this address, so there is nothing to project. The stream itself is fine.
+          </p>
+          <pre class="mt-8 overflow-x-auto rounded-xl border border-line bg-ink-950/80 p-4 font-mono text-[0.8125rem] leading-6 text-fg-muted"><span class="text-command">replay</span>(stream: <span class="text-view">"woksin"</span>, from: <span class="text-event">-1</span>)
+<span class="text-fg-faint">// → no events at position -1</span></pre>
+          <div class="mt-8 flex flex-wrap gap-3">
+            <a href="/" class="btn btn-primary">Back to the start of the stream</a>
+            <a href="/cv" class="btn">View CV</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <Footer slot="footer" />
+</Base>

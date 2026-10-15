@@ -1,0 +1,38 @@
+---
+import Base from '../layouts/Base.astro';
+import Nav from '../components/Nav.astro';
+import Hero from '../components/Hero.astro';
+import Now from '../components/Now.astro';
+import Stats from '../components/Stats.astro';
+import CareerReplay from '../components/CareerReplay.astro';
+import EventModel from '../components/EventModel.astro';
+import Cratis from '../components/Cratis.astro';
+import Activity from '../components/Activity.astro';
+import Projects from '../components/Projects.astro';
+import Agentic from '../components/Agentic.astro';
+import Writing from '../components/Writing.astro';
+import TalksSkills from '../components/TalksSkills.astro';
+import Contact from '../components/Contact.astro';
+import Footer from '../components/Footer.astro';
+import { person } from '../data/site';
+---
+
+<Base
+  title={`${person.name} · ${person.title}`}
+  description={`${person.tagline} ${person.name} is a software engineer in Oslo working on event sourcing, Event Modeling and developer tooling, and co-founder and chief architect of Cratis.`}
+>
+  <Nav slot="nav" />
+  <Hero />
+  <Now />
+  <Stats />
+  <CareerReplay />
+  <EventModel />
+  <Cratis />
+  <Activity />
+  <Agentic index="06" />
+  <Projects />
+  <Writing index="08" />
+  <TalksSkills />
+  <Contact />
+  <Footer slot="footer" />
+</Base>

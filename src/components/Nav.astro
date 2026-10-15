@@ -1,0 +1,123 @@
+---
+interface Props {
+  /** Prefix anchor links with '/' when not on the home page. */
+  home?: boolean;
+}
+const { home = true } = Astro.props;
+const base = home ? '' : '/';
+const links = [
+  { id: 'about', label: 'Now' },
+  { id: 'career', label: 'Career' },
+  { id: 'cratis', label: 'Cratis' },
+  { id: 'projects', label: 'Projects' },
+  { id: 'contact', label: 'Contact' },
+];
+---
+
+<header
+  data-nav
+  class="group/nav fixed inset-x-0 top-0 z-50 h-[var(--nav-h)] border-b border-transparent transition-[background-color,border-color,backdrop-filter] duration-300 data-[scrolled]:border-line data-[scrolled]:bg-ink-950/70 data-[scrolled]:backdrop-blur-xl data-[scrolled]:backdrop-saturate-150 print:hidden"
+>
+  <nav class="container-x flex h-full items-center justify-between gap-4" aria-label="Primary">
+    <a href={home ? '#top' : '/'} class="group flex items-center gap-2.5 rounded-md" aria-label="woksin, home">
+      <svg transition:name="monogram" viewBox="0 0 32 32" class="size-7 shrink-0 transition-transform duration-500 ease-[var(--ease-spring)] group-hover:-rotate-6" aria-hidden="true">
+        <rect x="2" y="2" width="28" height="28" rx="5.5" fill="#ff8a3d"></rect>
+        <path d="M2 24 8 30h16.5a5.5 5.5 0 0 0 5.5-5.5V24Z" fill="#000" opacity=".12"></path>
+        <path d="M8.5 12l2.75 9L16 13.5l4.75 7.5 2.75-9" fill="none" stroke="#1a0d03" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"></path>
+      </svg>
+      <span class="font-mono text-[0.9375rem] font-semibold tracking-tight">woksin</span>
+    </a>
+
+    <ul class="hidden items-center gap-1 md:flex">
+      {
+        links.map((l) => (
+          <li>
+            <a
+              href={`${base}#${l.id}`}
+              data-section={home ? l.id : undefined}
+              class="relative rounded-lg px-3 py-2 text-sm text-fg-muted transition-colors hover:text-fg aria-[current=location]:text-fg"
+            >
+              {l.label}
+            </a>
+          </li>
+        ))
+      }
+      <li>
+        <a href="/cv" class="rounded-lg px-3 py-2 text-sm text-fg-muted transition-colors hover:text-fg">CV</a>
+      </li>
+    </ul>
+
+    <div class="flex items-center gap-2">
+    <button
+      type="button"
+      data-theme-toggle
+      class="btn btn-sm w-9 px-0 text-fg-muted hover:text-fg"
+      aria-label="Light theme"
+      aria-pressed="false"
+      title="Toggle light theme"
+    >
+      <svg viewBox="0 0 20 20" class="theme-sun size-4" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+        <circle cx="10" cy="10" r="3.5"></circle><path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.3 4.3l1.4 1.4M14.3 14.3l1.4 1.4M4.3 15.7l1.4-1.4M14.3 5.7l1.4-1.4" stroke-linecap="round"></path>
+      </svg>
+      <svg viewBox="0 0 20 20" class="theme-moon size-4" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+        <path d="M16 12.5A6.5 6.5 0 0 1 7.5 4a6.5 6.5 0 1 0 8.5 8.5Z" stroke-linejoin="round"></path>
+      </svg>
+    </button>
+    <button
+      type="button"
+      data-terminal-open
+      class="btn btn-sm w-9 px-0 text-fg-muted hover:text-fg"
+      aria-label="Open terminal"
+      aria-haspopup="dialog"
+      aria-keyshortcuts="`"
+      title="Terminal ( ` )"
+    >
+      <svg viewBox="0 0 20 20" class="size-4" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+        <rect x="2.5" y="3.5" width="15" height="13" rx="2.5"></rect><path d="m6 8 2.5 2L6 12M10.5 12.5H14" stroke-linecap="round" stroke-linejoin="round"></path>
+      </svg>
+    </button>
+    <button
+      type="button"
+      data-palette-open
+      class="btn btn-sm gap-2.5 pr-1.5 text-fg-muted hover:text-fg"
+      aria-haspopup="dialog"
+      aria-keyshortcuts="Meta+K Control+K"
+    >
+      <svg viewBox="0 0 20 20" class="size-4" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+        <circle cx="9" cy="9" r="5.5"></circle><path d="m13.2 13.2 3.3 3.3" stroke-linecap="round"></path>
+      </svg>
+      <span class="md:hidden">Menu</span>
+      <span class="hidden md:inline">Commands</span>
+      <span class="hidden items-center gap-0.5 sm:flex" aria-hidden="true">
+        <kbd class="kbd" data-mod-key>⌘</kbd><kbd class="kbd">K</kbd>
+      </span>
+    </button>
+    </div>
+  </nav>
+</header>
+
+<script>
+  import { onPageLoad } from '../lib/lifecycle';
+  import { currentTheme, toggleTheme } from '../lib/theme';
+  // Bound once per full load; the button itself is re-rendered on every navigation.
+  document.addEventListener('click', (e) => {
+    if ((e.target as Element | null)?.closest('[data-theme-toggle]')) toggleTheme();
+  });
+  onPageLoad(() => {
+    document.querySelectorAll('[data-theme-toggle]').forEach((b) => b.setAttribute('aria-pressed', String(currentTheme() === 'light')));
+    const isMac = /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent);
+    if (!isMac) document.querySelectorAll('[data-mod-key]').forEach((el) => (el.textContent = 'Ctrl'));
+  });
+</script>
+
+<style>
+  .theme-moon {
+    display: none;
+  }
+  :global(html[data-theme='light']) .theme-sun {
+    display: none;
+  }
+  :global(html[data-theme='light']) .theme-moon {
+    display: block;
+  }
+</style>

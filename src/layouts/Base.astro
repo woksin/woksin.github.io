@@ -1,0 +1,129 @@
+---
+import '@fontsource-variable/inter/wght.css';
+import '@fontsource-variable/bricolage-grotesque/opsz.css';
+import '@fontsource-variable/jetbrains-mono/wght.css';
+import '../styles/global.css';
+import interUrl from '@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url';
+import displayUrl from '@fontsource-variable/bricolage-grotesque/files/bricolage-grotesque-latin-opsz-normal.woff2?url';
+import monoUrl from '@fontsource-variable/jetbrains-mono/files/jetbrains-mono-latin-wght-normal.woff2?url';
+import { ClientRouter } from 'astro:transitions';
+import { person } from '../data/site';
+import CommandPalette from '../components/CommandPalette.astro';
+import Terminal from '../components/Terminal.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  /** Path of the OG image inside public/. */
+  image?: string;
+  noindex?: boolean;
+  bodyClass?: string;
+}
+
+const { title, description, image = '/og.png', noindex = false, bodyClass = '' } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogImage = new URL(image, Astro.site);
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: person.name,
+  alternateName: [person.fullName, person.handle],
+  jobTitle: person.title,
+  email: `mailto:${person.email}`,
+  url: Astro.site?.toString(),
+  image: new URL('/apple-touch-icon.png', Astro.site).toString(),
+  address: { '@type': 'PostalAddress', addressLocality: 'Oslo', addressCountry: 'NO' },
+  knowsAbout: person.interests,
+  sameAs: [person.links.github, person.links.linkedin],
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex" />}
+    <meta name="theme-color" content="#08090c" />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="author" content={person.name} />
+    <meta name="generator" content={Astro.generator} />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <link rel="preload" href={displayUrl} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={interUrl} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={monoUrl} as="font" type="font/woff2" crossorigin />
+
+    <meta property="og:type" content="profile" />
+    <meta property="og:site_name" content={person.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={`${person.name}: ${person.tagline}`} />
+    <meta property="profile:first_name" content="Sindre" />
+    <meta property="profile:last_name" content="Wilting" />
+    <meta property="profile:username" content={person.handle} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+    <script is:inline>
+      // Apply the stored theme and motion preference before first paint, and carry them
+      // over to every page the view-transition router swaps in.
+      (function () {
+        function apply(d) {
+          var t = 'dark';
+          try {
+            var m = localStorage.getItem('woksin:motion');
+            if (m === 'reduced' || m === 'full') d.dataset.motion = m;
+            if (localStorage.getItem('woksin:theme') === 'light') t = 'light';
+          } catch (e) {}
+          d.dataset.theme = t;
+          d.style.colorScheme = t;
+          var reduced =
+            d.dataset.motion === 'reduced' ||
+            (d.dataset.motion !== 'full' && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+          if (!reduced) d.classList.add('js-motion');
+          d.classList.add('js');
+          var meta = d.querySelector('meta[name="theme-color"]');
+          if (meta) meta.setAttribute('content', t === 'light' ? '#f7f5f1' : '#08090c');
+        }
+        apply(document.documentElement);
+        document.addEventListener('astro:before-swap', function (e) {
+          apply(e.newDocument.documentElement);
+        });
+      })();
+    </script>
+    <ClientRouter fallback="swap" />
+  </head>
+  <body class:list={['grain', bodyClass]}>
+    <a
+      href="#main"
+      class="sr-only-focusable fixed top-3 left-3 z-[100] rounded-lg bg-event px-4 py-2 font-medium text-ink-950"
+      >Skip to content</a
+    >
+    <slot name="nav" />
+    <main id="main" tabindex="-1" class="outline-none">
+      <slot />
+    </main>
+    <slot name="footer" />
+    <CommandPalette />
+    <Terminal />
+    <script>
+      import '../scripts/ambient';
+    </script>
+  </body>
+</html>

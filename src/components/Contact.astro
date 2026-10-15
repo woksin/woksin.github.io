@@ -1,0 +1,155 @@
+---
+import { person } from '../data/site';
+const mailto = `mailto:${person.email}`;
+---
+
+<section id="contact" class="relative overflow-hidden py-24 md:py-40" aria-labelledby="contact-title">
+  <div class="pointer-events-none absolute inset-0" aria-hidden="true">
+    <div class="absolute bottom-0 left-1/2 h-[30rem] w-[70rem] -translate-x-1/2 translate-y-1/2 rounded-full bg-event/15 blur-[120px]"></div>
+  </div>
+  <div class="container-x relative">
+    <p class="mb-5 flex items-center gap-3 font-mono text-xs text-fg-faint" data-reveal>
+      <span class="text-fg-muted">07</span><span class="h-px w-8 bg-line-strong" aria-hidden="true"></span><span class="note note-command">Command</span>
+    </p>
+    <h2 id="contact-title" class="max-w-[14ch] text-[clamp(2.75rem,7.5vw,6.5rem)] leading-[0.92] font-[680] tracking-[-0.03em]" data-reveal>
+      Append an event to my stream.
+    </h2>
+    <p class="mt-6 max-w-[52ch] text-lg text-fg-muted" data-reveal>
+      Questions about event sourcing, Cratis, a project or a role? Issue the command and it lands in my inbox.
+    </p>
+
+    <div class="mt-14 grid grid-cols-1 items-center gap-6 lg:grid-cols-[1fr_auto_1fr]" data-reveal data-contact>
+      <!-- Command sticky note -->
+      <div class="sticky-card cmd">
+        <p class="flex items-center justify-between font-mono text-xs">
+          <span class="note note-command">Command</span>
+          <span class="text-fg-faint">{person.handle}/inbox</span>
+        </p>
+        <p class="mt-4 font-display text-4xl font-[680] tracking-[-0.03em] text-command-soft">SendMessage</p>
+        <dl class="mt-5 grid grid-cols-[5.5rem_1fr] gap-y-2 font-mono text-[0.8125rem]">
+          <dt class="text-fg-faint">to</dt><dd class="truncate text-fg">{person.email}</dd>
+          <dt class="text-fg-faint">from</dt><dd class="text-fg-muted">you</dd>
+          <dt class="text-fg-faint">channel</dt><dd class="text-fg-muted">email · LinkedIn · GitHub</dd>
+        </dl>
+        <button type="button" class="btn mt-6 w-full border-command/40 bg-command/15 text-command-soft hover:bg-command/25" data-send aria-expanded="false" aria-controls="contact-result" hidden>
+          Execute command
+          <span class="font-mono text-xs opacity-70" aria-hidden="true">↵</span>
+        </button>
+      </div>
+
+      <svg viewBox="0 0 80 24" class="arrow mx-auto hidden h-6 w-20 text-fg-faint lg:block" fill="none" aria-hidden="true">
+        <path d="M2 12h72m-8-7 8 7-8 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="4 5"></path>
+      </svg>
+
+      <!-- Resulting event -->
+      <div id="contact-result" class="sticky-card evt" data-result>
+        <p class="flex items-center justify-between font-mono text-xs">
+          <span class="note">Event</span>
+          <span class="text-fg-faint" data-result-seq>pending</span>
+        </p>
+        <p class="mt-4 font-display text-4xl font-[680] tracking-[-0.03em] text-event-soft">MessageRequested</p>
+        <div class="mt-6 flex flex-wrap gap-2.5">
+          <a href={mailto} class="btn btn-primary">
+            <svg viewBox="0 0 16 16" class="size-4" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="2" y="3.5" width="12" height="9" rx="1.5"></rect><path d="m2.5 4.5 5.5 4 5.5-4" stroke-linejoin="round"></path></svg>
+            Write an email
+          </a>
+          <span class="relative inline-flex">
+            <button type="button" class="btn" data-copy={person.email} aria-label={`Copy email address ${person.email}`}>
+              <svg viewBox="0 0 16 16" class="size-4" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="5" y="5" width="9" height="9" rx="2"></rect><path d="M11 5V3.5A1.5 1.5 0 0 0 9.5 2h-6A1.5 1.5 0 0 0 2 3.5v6A1.5 1.5 0 0 0 3.5 11H5"></path></svg>
+              <span data-copy-label>Copy email</span>
+            </button>
+            <span class="sr-only" aria-live="polite" data-copy-status></span>
+          </span>
+        </div>
+        <div class="mt-3 flex flex-wrap gap-2.5">
+          <a href={person.links.linkedin} class="btn btn-sm" rel="me noopener">LinkedIn</a>
+          <a href={person.links.github} class="btn btn-sm" rel="me noopener">GitHub</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .sticky-card {
+    position: relative;
+    border-radius: 1.25rem;
+    padding: 1.5rem;
+    border: 1px solid var(--color-line);
+    background: color-mix(in srgb, var(--color-ink-900) 80%, transparent);
+    backdrop-filter: blur(12px);
+    transition:
+      opacity 700ms var(--ease-out-expo),
+      transform 700ms var(--ease-out-expo),
+      filter 700ms var(--ease-out-expo);
+  }
+  @media (min-width: 768px) {
+    .sticky-card {
+      padding: 2rem;
+    }
+  }
+  .cmd {
+    border-color: rgb(77 163 255 / 0.3);
+    background:
+      radial-gradient(120% 100% at 0% 0%, rgb(77 163 255 / 0.16), transparent 60%),
+      color-mix(in srgb, var(--color-ink-900) 80%, transparent);
+    box-shadow: 0 30px 80px -40px rgb(77 163 255 / 0.5);
+  }
+  .evt {
+    border-color: rgb(255 138 61 / 0.3);
+    background:
+      radial-gradient(120% 100% at 100% 0%, rgb(255 138 61 / 0.16), transparent 60%),
+      color-mix(in srgb, var(--color-ink-900) 80%, transparent);
+    box-shadow: 0 30px 80px -40px rgb(255 138 61 / 0.5);
+  }
+  /* Before the command executes, the event is a ghost. */
+  [data-armed] .evt {
+    opacity: 0.35;
+    filter: blur(1.5px) saturate(0.3);
+    transform: translateX(-12px) scale(0.97);
+    pointer-events: none;
+    border-style: dashed;
+  }
+  [data-armed] .arrow {
+    opacity: 0.4;
+  }
+  .arrow {
+    transition: opacity 600ms ease, color 600ms ease;
+  }
+  [data-sent] .arrow {
+    color: var(--color-event);
+  }
+  :global(.js-motion) [data-sent] .arrow path {
+    animation: dash 1.2s linear infinite;
+  }
+  @keyframes dash {
+    to {
+      stroke-dashoffset: -18;
+    }
+  }
+</style>
+
+<script>
+  import { onPageLoad } from '../lib/lifecycle';
+  onPageLoad(() => {
+    const root = document.querySelector<HTMLElement>('[data-contact]');
+    const send = root?.querySelector<HTMLButtonElement>('[data-send]');
+    const result = root?.querySelector<HTMLElement>('[data-result]');
+    if (root && send && result) {
+      send.hidden = false;
+      root.toggleAttribute('data-armed', true);
+      result.setAttribute('inert', '');
+      send.addEventListener('click', () => {
+        root.removeAttribute('data-armed');
+        root.setAttribute('data-sent', '');
+        result.removeAttribute('inert');
+        send.setAttribute('aria-expanded', 'true');
+        send.disabled = true;
+        send.textContent = 'Command accepted';
+        const seq = root.querySelector('[data-result-seq]');
+        if (seq) seq.textContent = 'appended';
+        result.querySelector<HTMLElement>('a')?.focus({ preventScroll: true });
+      });
+    }
+  });
+</script>

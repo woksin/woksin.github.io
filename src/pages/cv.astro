@@ -1,0 +1,350 @@
+---
+import Base from '../layouts/Base.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import { person, careerEvents, cratis, skills, education, certifications, talks } from '../data/site';
+import { liveProjects as projects, mergedPrFloor } from '../lib/github';
+import { project, formatMonth, normaliseDate } from '../lib/career';
+
+const projection = project(careerEvents);
+
+// Milestones that happened during a role are listed under it.
+const MILESTONES = new Set(['SystemDeployed', 'LeadershipAssigned']);
+const roles = [...projection.roles].reverse().map((r) => ({
+  ...r,
+  milestones: careerEvents.filter((e) => {
+    const d = normaliseDate(e.date);
+    // Same organisation (an assignment such as 'Azets (via Everdeen)' counts) and within the role's dates.
+    return MILESTONES.has(e.type) && !!e.org?.includes(r.org) && d >= normaliseDate(r.from) && (!r.to || d < normaliseDate(r.to));
+  }),
+}));
+
+const EARLIER = new Set(['VolunteerTeamJoined', 'PartTimeRoleStarted', 'ContractStarted']);
+const earlier = careerEvents.filter((e) => EARLIER.has(e.type)).reverse();
+
+const range = (from: string, to?: string) => `${formatMonth(from)} – ${to ? formatMonth(to) : 'present'}`;
+const host = (url: string) => url.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '');
+---
+
+<Base
+  title={`CV · ${person.name}`}
+  description={`Curriculum vitae of ${person.fullName}, ${person.title}, ${person.location}.`}
+  bodyClass="cv-page"
+>
+  <Nav slot="nav" home={false} />
+
+  <div class="container-x max-w-5xl pt-[calc(var(--nav-h)+2.5rem)] pb-24 print:p-0">
+    <div class="no-print mb-6 flex flex-wrap items-center justify-between gap-3">
+      <a href="/" class="link-quiet font-mono text-xs">← woksin.com</a>
+      <div class="flex flex-wrap gap-2">
+        <a href="/#career" class="btn btn-sm">Replay as event stream</a>
+        <button type="button" class="btn btn-sm btn-primary" data-print>
+          <svg viewBox="0 0 16 16" class="size-4" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4.5 6V2.5h7V6M4.5 11.5h-2v-5h11v5h-2M4.5 9.5h7v4h-7z" stroke-linejoin="round"></path></svg>
+          Print / Save as PDF
+        </button>
+      </div>
+    </div>
+
+    <article class="cv panel p-6 sm:p-10 md:p-14" aria-labelledby="cv-name">
+      <header class="cv-head flex flex-col gap-6 border-b border-line pb-8 md:flex-row md:items-end md:justify-between">
+        <div>
+          <p class="note no-print mb-4">Projection: Sindre.CV</p>
+          <h1 id="cv-name" transition:name="person-name" class="text-[clamp(2.25rem,5vw,3.5rem)] leading-none font-[680] tracking-[-0.04em]">{person.fullName}</h1>
+          <p class="mt-3 text-lg text-fg-muted">{person.title}</p>
+        </div>
+        <ul class="cv-contact space-y-1 font-mono text-[0.8125rem] text-fg-muted md:text-right">
+          <li>{person.location}</li>
+          <li><a href={`mailto:${person.email}`} class="hover:text-fg" data-no-url>{person.email}</a></li>
+          <li><a href="https://www.woksin.com" class="hover:text-fg" data-no-url>woksin.com</a></li>
+          <li><a href={person.links.github} class="hover:text-fg" data-no-url>{host(person.links.github)}</a></li>
+          <li><a href={person.links.linkedin} class="hover:text-fg" data-no-url>{host(person.links.linkedin)}</a></li>
+        </ul>
+      </header>
+
+      <div class="cv-grid mt-10 grid gap-12 md:grid-cols-[1fr_15rem]">
+        <div class="cv-main space-y-12">
+          <section aria-labelledby="cv-summary">
+            <h2 id="cv-summary" class="cv-h">Summary</h2>
+            <div class="space-y-3 leading-relaxed text-fg-muted">
+              {person.about.map((p) => <p>{p}</p>)}
+            </div>
+          </section>
+
+          <section aria-labelledby="cv-exp">
+            <h2 id="cv-exp" class="cv-h">Experience</h2>
+            <ol class="space-y-8">
+              {
+                roles.map((r) => (
+                  <li class="cv-item">
+                    <div class="flex flex-wrap items-baseline justify-between gap-x-4">
+                      <h3 class="text-lg font-[640] tracking-[-0.01em]">
+                        {r.title}
+                        <span class="font-sans font-normal text-fg-muted">
+                          {' · '}
+                          {r.orgUrl ? <a href={r.orgUrl} data-print-url={host(r.orgUrl)} class="underline decoration-line-strong hover:text-fg">{r.org}</a> : r.org}
+                        </span>
+                      </h3>
+                      <p class="font-mono text-xs whitespace-nowrap text-fg-faint">
+                        {range(r.from, r.to)}
+                        {r.location && ` · ${r.location}`}
+                      </p>
+                    </div>
+                    <p class="mt-2 leading-relaxed text-fg-muted">{r.summary}</p>
+                    {r.org === 'Cratis' && (
+                      <p class="mt-2 leading-relaxed text-fg-muted">
+                        Founded {cratis.repos.filter((x) => x.founded).map((x) => x.name).join(', ')}; also #1 committer on {cratis.repos.filter((x) => x.rank === 1 && !x.founded).map((x) => x.name).join(', ')}; #2 all-time on {cratis.repos.filter((x) => x.rank === 2 && x.group === 'pipeline').map((x) => x.name).join(' and ')}. {new Intl.NumberFormat('en-US').format(mergedPrFloor)}+ merged pull requests in the Cratis organisation.
+                      </p>
+                    )}
+                    {r.milestones.length > 0 && (
+                      <ul class="mt-2 space-y-1 text-sm text-fg-muted">
+                        {r.milestones.map((m) => (
+                          <li class="flex gap-2">
+                            <span class="font-mono text-xs leading-5 whitespace-nowrap text-event">{formatMonth(m.date)}</span>
+                            <span><span class="text-fg">{m.title}.</span> {m.summary}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                    {r.skills.length > 0 && <p class="mt-2 font-mono text-[0.75rem] text-fg-faint">{r.skills.join(' · ')}</p>}
+                  </li>
+                ))
+              }
+            </ol>
+          </section>
+
+          <section aria-labelledby="cv-earlier">
+            <h2 id="cv-earlier" class="cv-h">Earlier</h2>
+            <ol class="space-y-5">
+              {
+                earlier.map((e) => (
+                  <li class="cv-item">
+                    <div class="flex flex-wrap items-baseline justify-between gap-x-4">
+                      <h3 class="font-[620]">
+                        {e.title}
+                        <span class="font-sans font-normal text-fg-muted">
+                          {' · '}
+                          {e.orgUrl ? <a href={e.orgUrl} data-print-url={host(e.orgUrl)} class="underline decoration-line-strong hover:text-fg">{e.org}</a> : e.org}
+                        </span>
+                      </h3>
+                      <p class="font-mono text-xs whitespace-nowrap text-fg-faint">{e.endDate ? range(e.date, e.endDate) : `from ${formatMonth(e.date)}`}</p>
+                    </div>
+                    <p class="mt-1.5 text-sm leading-relaxed text-fg-muted">{e.summary}</p>
+                  </li>
+                ))
+              }
+            </ol>
+          </section>
+
+          <section aria-labelledby="cv-projects">
+            <h2 id="cv-projects" class="cv-h">Selected projects</h2>
+            <ul class="cv-projects grid gap-x-8 gap-y-4 sm:grid-cols-2">
+              {
+                projects.map((p) => (
+                  <li class="cv-item">
+                    <h3 class="font-[620]">
+                      <a href={p.url} data-print-url={host(p.url)} class="hover:text-event-soft">{p.name}</a>
+                      {p.version && <span class="ml-1.5 font-mono text-xs font-normal text-fg-faint">{p.version}</span>}
+                    </h3>
+                    <p class="mt-0.5 text-sm leading-relaxed text-fg-muted">{p.pitch}</p>
+                    <p class="mt-0.5 font-mono text-[0.75rem] text-fg-faint">{p.stack.join(' · ')}</p>
+                  </li>
+                ))
+              }
+            </ul>
+          </section>
+        </div>
+
+        <aside class="cv-side space-y-10 text-sm">
+          <section aria-labelledby="cv-skills">
+            <h2 id="cv-skills" class="cv-h">Skills</h2>
+            <dl class="space-y-4">
+              {
+                Object.entries(skills).map(([group, list]) => (
+                  <div>
+                    <dt class="mb-1 font-medium text-fg">{group}</dt>
+                    <dd class="leading-relaxed text-fg-muted">{list.join(', ')}</dd>
+                  </div>
+                ))
+              }
+            </dl>
+          </section>
+
+          <section aria-labelledby="cv-edu">
+            <h2 id="cv-edu" class="cv-h">Education</h2>
+            {
+              education.map((e) => (
+                <div>
+                  <p class="font-medium text-fg">{e.degree}</p>
+                  <p class="text-fg-muted">{e.school}</p>
+                  <p class="font-mono text-xs text-fg-faint">{e.from} – {e.to}</p>
+                </div>
+              ))
+            }
+          </section>
+
+          <section aria-labelledby="cv-certs">
+            <h2 id="cv-certs" class="cv-h">Certifications</h2>
+            <ul class="space-y-3">
+              {
+                certifications.map((c) => (
+                  <li>
+                    <a href={c.url} class="font-medium text-fg hover:text-event-soft" data-no-url>{c.title}</a>
+                    <p class="font-mono text-xs text-fg-faint">{c.issuer} · {c.year}</p>
+                  </li>
+                ))
+              }
+            </ul>
+          </section>
+
+          <section aria-labelledby="cv-talks">
+            <h2 id="cv-talks" class="cv-h">Talks</h2>
+            {
+              talks.map((t) => (
+                <div>
+                  <a href={t.url} class="font-medium text-fg hover:text-event-soft" data-no-url>{t.title}</a>
+                  <p class="text-fg-muted">{t.host}, with {t.with}</p>
+                  <p class="font-mono text-xs text-fg-faint">{t.year}</p>
+                </div>
+              ))
+            }
+          </section>
+
+          <section aria-labelledby="cv-lang">
+            <h2 id="cv-lang" class="cv-h">Languages</h2>
+            <ul class="space-y-1 text-fg-muted">
+              {person.languages.map((l) => <li>{l}</li>)}
+            </ul>
+          </section>
+        </aside>
+      </div>
+    </article>
+  </div>
+
+  <Footer slot="footer" />
+</Base>
+
+<style>
+  .cv {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  .cv-h {
+    margin-bottom: 1.25rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-event);
+  }
+  .cv h3 {
+    font-family: var(--font-display);
+  }
+
+  @media print {
+    @page {
+      size: A4;
+      margin: 13mm 14mm;
+    }
+    :global(.grain::after),
+    :global(header[data-nav]),
+    :global(footer),
+    :global(dialog),
+    :global(.sr-only-focusable),
+    .no-print {
+      display: none !important;
+    }
+    .cv {
+      padding: 0 !important;
+      border: 0 !important;
+      background: none !important;
+      box-shadow: none !important;
+      backdrop-filter: none !important;
+      color: #111;
+    }
+    .cv :global(*) {
+      color: #111 !important;
+      border-color: #d4d4d4 !important;
+    }
+    .cv :global(.text-fg-muted),
+    .cv :global(.text-fg-faint) {
+      color: #444 !important;
+    }
+    .cv-h {
+      color: #b4520d !important;
+      margin-bottom: 0.6rem;
+      font-size: 7.5pt;
+    }
+    .cv-head {
+      padding-bottom: 1rem;
+    }
+    .cv-head h1 {
+      font-size: 24pt;
+    }
+    .cv-grid {
+      display: grid !important;
+      grid-template-columns: 1fr 13.5rem !important;
+      gap: 1.75rem !important;
+      margin-top: 1.25rem !important;
+    }
+    .cv-main {
+      row-gap: 0;
+    }
+    .cv-main > :global(* + *) {
+      margin-top: 1.4rem !important;
+    }
+    .cv-main :global(ol.space-y-8 > * + *) {
+      margin-top: 0.9rem !important;
+    }
+    .cv-side > :global(* + *) {
+      margin-top: 1.25rem !important;
+    }
+    .cv-item,
+    .cv-side > section {
+      break-inside: avoid;
+    }
+    .cv-h {
+      break-after: avoid;
+    }
+    .cv :global(a) {
+      text-decoration: none !important;
+    }
+    .cv-main :global(a[data-print-url])::after {
+      content: ' ' attr(data-print-url);
+      font-family: var(--font-mono);
+      font-size: 7pt;
+      color: #555;
+      word-break: break-all;
+    }
+    .cv :global(.text-lg) {
+      font-size: 10pt;
+    }
+    .cv :global(.leading-relaxed) {
+      line-height: 1.42;
+    }
+    .cv-projects :global(a[data-print-url])::after {
+      display: block;
+      word-break: normal;
+    }
+    .cv-projects {
+      grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+      column-gap: 1rem !important;
+      row-gap: 0.6rem !important;
+    }
+  }
+</style>
+
+<script>
+  import { onPageLoad } from '../lib/lifecycle';
+  onPageLoad(() => {
+    if (!document.querySelector('.cv-page')) return;
+    document.querySelector('[data-print]')?.addEventListener('click', () => window.print());
+    const url = new URL(location.href);
+    if (url.searchParams.has('print')) {
+      history.replaceState(history.state, '', url.pathname);
+      const print = () => window.setTimeout(() => window.print(), 400);
+      if (document.readyState === 'complete') print();
+      else window.addEventListener('load', print, { once: true });
+    }
+  });
+</script>

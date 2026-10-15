@@ -1,0 +1,21 @@
+---
+interface Props {
+  index: string;
+  kind?: 'event' | 'command' | 'view';
+  label: string;
+  title: string;
+  id?: string;
+}
+const { index, kind = 'event', label, title, id } = Astro.props;
+const noteClass = kind === 'command' ? 'note note-command' : kind === 'view' ? 'note note-view' : 'note';
+---
+
+<header class="mb-12 md:mb-16" data-reveal>
+  <p class="mb-5 flex items-center gap-3 font-mono text-xs text-fg-faint">
+    <span class="text-fg-muted">{index}</span>
+    <span class="h-px w-8 bg-line-strong" aria-hidden="true"></span>
+    <span class={noteClass}>{label}</span>
+  </p>
+  <h2 id={id} class="section-title max-w-[22ch]">{title}</h2>
+  <slot />
+</header>

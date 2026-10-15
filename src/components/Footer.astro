@@ -1,0 +1,14 @@
+---
+import { person } from '../data/site';
+const year = new Date().getFullYear();
+---
+
+<footer class="border-t border-line print:hidden">
+  <div class="container-x flex flex-col gap-4 py-10 text-sm text-fg-muted sm:flex-row sm:items-center sm:justify-between">
+    <p class="font-mono text-xs">© {year} {person.name}</p>
+    <p class="font-mono text-xs">
+      Built with Astro · event-sourced with love ·
+      <a href="https://github.com/woksin/woksin.github.io" class="underline decoration-line-strong hover:text-fg" rel="noopener">source</a>
+    </p>
+  </div>
+</footer>

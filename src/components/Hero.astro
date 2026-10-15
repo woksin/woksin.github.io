@@ -1,0 +1,193 @@
+---
+import { person, careerEvents } from '../data/site';
+import { liveRepos } from '../lib/github';
+import type { BoardLabels } from '../scripts/event-board';
+const position = careerEvents.length;
+
+// Board cards use real names only: event types from the career stream, the merged-PR
+// events from the live feed, and read models this site actually projects.
+const commandFor: Record<string, string> = {
+  StudiesStarted: 'StartStudies', VolunteerTeamJoined: 'JoinVolunteerTeam', PartTimeRoleStarted: 'StartPartTimeRole',
+  ContractStarted: 'StartContract', DegreeCompleted: 'CompleteDegree', EmploymentStarted: 'StartEmployment',
+  CertificationsEarned: 'EarnCertifications', CompanyCoFounded: 'FoundCompany', SystemDeployed: 'DeploySystem',
+  TalkGiven: 'GiveTalk', LeadershipAssigned: 'AssignLeadership', ToolReleased: 'ReleaseTool',
+};
+const careerFlows = [...new Set(careerEvents.map((e) => e.type))]
+  .filter((t) => commandFor[t])
+  .map((t): [string, string] => [commandFor[t]!, t]);
+const labels: BoardLabels = {
+  // Merged PRs are by far the most common real event, so they show up most.
+  flows: [...careerFlows, ...Array.from({ length: Math.ceil(careerFlows.length / 2) }, (): [string, string] => ['MergePullRequest', 'PullRequestMerged'])],
+  views: ['Sindre.Now', 'CareerReplay', 'Contributions', ...liveRepos],
+};
+---
+
+<section id="top" data-hero class="relative isolate flex min-h-[min(100svh,64rem)] items-center overflow-hidden pt-[var(--nav-h)]">
+  <div class="pointer-events-none absolute inset-0 -z-10" aria-hidden="true">
+    <div class="spotlight absolute inset-0" data-spotlight></div>
+    <canvas data-board data-labels={JSON.stringify(labels)} class="board absolute inset-0 h-full w-full"></canvas>
+    <div class="absolute inset-0 bg-[radial-gradient(60rem_40rem_at_15%_45%,color-mix(in_srgb,var(--color-ink-950)_92%,transparent),transparent_70%)]"></div>
+    <div class="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent to-ink-950"></div>
+    <div class="absolute -top-40 left-1/2 h-80 w-[60rem] -translate-x-1/2 rounded-full bg-event/10 blur-3xl"></div>
+  </div>
+
+  <div class="container-x relative py-20 md:py-28">
+    <p class="hero-in mb-8 inline-flex items-center gap-3 rounded-full border border-line bg-ink-900/70 py-1.5 pr-4 pl-2 font-mono text-xs text-fg-muted backdrop-blur" style="--d:0ms">
+      <span class="inline-flex items-center gap-1.5 rounded-full bg-view/10 px-2 py-0.5 text-view">
+        <span class="size-1.5 animate-pulse-dot rounded-full bg-view"></span>live
+      </span>
+      stream <span class="text-fg">woksin</span> · position <span class="text-event">{position}</span>
+    </p>
+
+    <h1>
+      <span class="hero-in mb-5 block font-sans text-lg font-medium tracking-normal text-fg-muted md:text-xl" style="--d:60ms">
+        <span transition:name="person-name" class="inline-block">{person.name}</span> <span class="text-fg-faint">—</span> <span class="hidden sm:inline">{person.title}</span><span class="sm:hidden">{person.titleShort}</span>
+      </span>
+      <span
+        class="hero-in block max-w-[12.5ch] text-[clamp(2.85rem,7.4vw,6.5rem)] leading-[0.95] font-[650] tracking-[-0.022em]"
+        style="--d:120ms"
+      >
+        I build systems that <span class="text-shine">remember everything.</span>
+      </span>
+    </h1>
+
+    <p class="hero-in mt-8 max-w-[58ch] text-lg leading-relaxed text-fg-muted md:text-xl" style="--d:200ms">{person.intro}</p>
+
+    <div class="hero-in mt-10 flex flex-wrap items-center gap-3" style="--d:280ms">
+      <a href="/cv" class="btn btn-primary" data-magnetic>
+        View CV
+        <svg viewBox="0 0 16 16" class="size-4" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+      </a>
+      <a href={person.links.github} class="btn" rel="me noopener">
+        <svg viewBox="0 0 16 16" class="size-4" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>
+        GitHub
+      </a>
+      <a href="#contact" class="btn">Contact</a>
+      <span class="ml-1 hidden font-mono text-xs text-fg-faint lg:inline">
+        or press <kbd class="kbd" data-mod-key>⌘</kbd> <kbd class="kbd">K</kbd> · <kbd class="kbd">`</kbd> for a terminal
+      </span>
+    </div>
+
+    <dl class="hero-in mt-16 grid max-w-xl grid-cols-3 gap-6 border-t border-line pt-6 font-mono text-xs" style="--d:360ms">
+      <div>
+        <dt class="note note-command mb-2">Command</dt>
+        <dd class="text-fg-muted">intent to change</dd>
+      </div>
+      <div>
+        <dt class="note mb-2">Event</dt>
+        <dd class="text-fg-muted">a fact that happened</dd>
+      </div>
+      <div>
+        <dt class="note note-view mb-2">Read model</dt>
+        <dd class="text-fg-muted">a projection of facts</dd>
+      </div>
+    </dl>
+  </div>
+</section>
+
+<style>
+  .board {
+    opacity: 0;
+    transition: opacity 1.6s ease;
+    mask-image: linear-gradient(90deg, rgb(0 0 0 / 0.06) 0%, rgb(0 0 0 / 0.14) 38%, rgb(0 0 0 / 0.85) 58%, #000 72%);
+  }
+  [data-board-ready] .board {
+    opacity: 1;
+  }
+  @media (max-width: 767px) {
+    [data-board-ready] .board {
+      opacity: 0.45;
+    }
+  }
+  .spotlight {
+    --sx: 70%;
+    --sy: 40%;
+    background: radial-gradient(34rem circle at var(--sx) var(--sy), color-mix(in oklab, var(--color-event) 9%, transparent), transparent 60%);
+    opacity: 0;
+    transition: opacity 600ms ease;
+  }
+  [data-hero]:hover .spotlight {
+    opacity: 1;
+  }
+  [data-magnetic] {
+    transform: translate(var(--tx, 0), var(--ty, 0));
+    transition: transform 380ms var(--ease-spring), background-color 180ms ease;
+  }
+  .text-shine {
+    background: linear-gradient(100deg, #ffb37f 0%, #ff8a3d 35%, #ff6a2b 60%, #ffcfa8 100%);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  :global(html[data-theme='light']) .text-shine {
+    background-image: linear-gradient(100deg, #c45a10 0%, #ad4e0b 40%, #93400a 65%, #c96a2a 100%);
+  }
+  :global(.js-motion) .text-shine {
+    animation: shine 9s ease-in-out infinite alternate;
+  }
+  @keyframes shine {
+    to {
+      background-position: 100% 0;
+    }
+  }
+  :global(.js-motion) .hero-in {
+    animation: hero-in 1.1s var(--ease-out-expo) both;
+    animation-delay: var(--d, 0ms);
+  }
+  @keyframes hero-in {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+      filter: blur(6px);
+    }
+  }
+</style>
+
+<script>
+  import { mountEventBoard, type BoardLabels } from '../scripts/event-board';
+  import { onPageLoad } from '../lib/lifecycle';
+  import { motionReduced } from '../lib/motion';
+  onPageLoad(() => {
+    const host = document.querySelector<HTMLElement>('[data-hero]');
+    const canvas = host?.querySelector<HTMLCanvasElement>('[data-board]');
+    if (!host || !canvas) return;
+    let labels: BoardLabels | undefined;
+    try {
+      labels = JSON.parse(canvas.dataset['labels'] ?? '') as BoardLabels;
+    } catch {
+      labels = undefined;
+    }
+    const stopBoard = mountEventBoard(canvas, host, labels);
+
+    // Pointer spotlight and a magnetic primary CTA (fine pointers, full motion only).
+    const spot = host.querySelector<HTMLElement>('[data-spotlight]');
+    const cta = host.querySelector<HTMLElement>('[data-magnetic]');
+    const fine = window.matchMedia('(pointer: fine)');
+    const onMove = (e: PointerEvent) => {
+      if (spot) {
+        const r = host.getBoundingClientRect();
+        spot.style.setProperty('--sx', `${e.clientX - r.left}px`);
+        spot.style.setProperty('--sy', `${e.clientY - r.top}px`);
+      }
+      if (!cta || !fine.matches || motionReduced()) return;
+      const b = cta.getBoundingClientRect();
+      const dx = e.clientX - (b.left + b.width / 2);
+      const dy = e.clientY - (b.top + b.height / 2);
+      const near = Math.hypot(dx, dy) < 110;
+      cta.style.setProperty('--tx', near ? `${dx * 0.18}px` : '0px');
+      cta.style.setProperty('--ty', near ? `${dy * 0.28}px` : '0px');
+    };
+    const reset = () => {
+      cta?.style.setProperty('--tx', '0px');
+      cta?.style.setProperty('--ty', '0px');
+    };
+    host.addEventListener('pointermove', onMove, { passive: true });
+    host.addEventListener('pointerleave', reset);
+    return () => {
+      stopBoard();
+      host.removeEventListener('pointermove', onMove);
+      host.removeEventListener('pointerleave', reset);
+    };
+  });
+</script>

@@ -1,0 +1,154 @@
+---
+// Shell for the interactive terminal. The behaviour lives in src/scripts/terminal.ts and is
+// only downloaded the first time the terminal opens.
+const chips = ['help', 'whoami', 'now', 'git log --oneline', 'stream tail', 'ls projects', 'cat workstats', 'contact', 'replay'];
+---
+
+<dialog class="term" data-terminal aria-label="Terminal" aria-describedby="term-hint" transition:persist="terminal">
+  <div class="shell panel flex flex-col overflow-hidden">
+    <div class="flex items-center gap-3 border-b border-line px-4 py-2.5">
+      <span class="flex gap-1.5" aria-hidden="true">
+        <span class="size-2.5 rounded-full bg-[#ff5f57]/80"></span>
+        <span class="size-2.5 rounded-full bg-[#febc2e]/80"></span>
+        <span class="size-2.5 rounded-full bg-[#28c840]/80"></span>
+      </span>
+      <p class="flex-1 truncate text-center font-mono text-xs text-fg-muted">woksin@stream: ~</p>
+      <button type="button" class="kbd cursor-pointer" data-terminal-close aria-label="Close terminal">esc</button>
+    </div>
+    <div class="out min-h-0 flex-1 overflow-y-auto px-4 py-3 font-mono text-[0.8125rem] leading-relaxed" role="log" aria-live="polite" aria-label="Terminal output" data-terminal-out></div>
+    <form class="flex items-center gap-2 border-t border-line px-4 py-3 font-mono text-[0.8125rem]" data-terminal-form>
+      <label for="term-input" class="shrink-0"><span class="text-view">woksin@stream</span><span class="text-fg-faint">:</span><span class="text-command">~</span><span class="text-fg-faint">$</span></label>
+      <input
+        id="term-input"
+        type="text"
+        class="min-w-0 flex-1 bg-transparent text-fg focus:outline-none"
+        autocomplete="off"
+        autocapitalize="off"
+        autocorrect="off"
+        spellcheck="false"
+        enterkeyhint="go"
+        aria-describedby="term-hint"
+        data-terminal-input
+      />
+    </form>
+    <div class="chips flex gap-2 overflow-x-auto border-t border-line px-4 py-2.5" role="group" aria-label="Suggested commands" data-terminal-chips>
+      {chips.map((c) => <button type="button" class="chip" data-cmd={c}>{c}</button>)}
+    </div>
+    <p id="term-hint" class="sr-only">Type help for a list of commands. Up and down browse history, Tab completes, Escape closes.</p>
+  </div>
+</dialog>
+
+<style>
+  .term {
+    position: fixed;
+    inset: 0;
+    margin: 0;
+    padding: 10vh 1rem 1rem;
+    width: 100%;
+    max-width: none;
+    height: 100%;
+    max-height: none;
+    background: transparent;
+    color: inherit;
+    border: 0;
+  }
+  .term:not([open]) {
+    display: none;
+  }
+  .term::backdrop {
+    background: rgb(4 5 7 / 0.6);
+    backdrop-filter: blur(6px);
+  }
+  .shell {
+    margin-inline: auto;
+    max-width: 46rem;
+    height: min(34rem, 80dvh);
+    background: color-mix(in oklab, var(--color-ink-900) 94%, transparent);
+    box-shadow:
+      inset 0 1px 0 color-mix(in srgb, var(--color-fg) 6%, transparent),
+      0 50px 120px -20px rgb(0 0 0 / 0.8),
+      0 0 0 1px color-mix(in srgb, var(--color-fg) 4%, transparent);
+  }
+  @media (max-width: 639px) {
+    .term {
+      padding: 0.75rem;
+    }
+    .shell {
+      height: min(30rem, 70dvh);
+    }
+  }
+  :global(.js-motion) .term[open] .shell {
+    animation: shell-in 260ms var(--ease-out-expo);
+  }
+  @keyframes shell-in {
+    from {
+      opacity: 0;
+      transform: translateY(10px) scale(0.985);
+    }
+  }
+  #term-input {
+    caret-color: var(--color-event);
+    caret-shape: block;
+  }
+  .chip {
+    flex-shrink: 0;
+    border-radius: 999px;
+    border: 1px solid var(--color-line);
+    padding: 0.2rem 0.65rem;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    color: var(--color-fg-muted);
+    white-space: nowrap;
+    cursor: pointer;
+    transition: color 150ms ease, border-color 150ms ease;
+  }
+  .chip:hover {
+    color: var(--color-fg);
+    border-color: var(--color-line-strong);
+  }
+  .chips {
+    scrollbar-width: none;
+  }
+  .out :global(.ln) {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+  .out :global(a) {
+    text-decoration: underline;
+    text-decoration-color: var(--color-line-strong);
+  }
+  .out :global(a:hover) {
+    color: var(--color-fg);
+  }
+</style>
+
+<script>
+  import { onPageLoad } from '../lib/lifecycle';
+
+  type Mod = typeof import('../scripts/terminal');
+  let mod: Promise<Mod> | null = null;
+  const load = () => (mod ??= import('../scripts/terminal'));
+  const open = () => void load().then((m) => m.openTerminal());
+
+  const typing = (el: EventTarget | null) =>
+    el instanceof HTMLElement && (el.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName));
+
+  // Bound once per full page load; the router swaps the DOM but keeps these.
+  document.addEventListener('keydown', (e) => {
+    if ((e.key !== '`' && e.key !== '~') || e.metaKey || e.ctrlKey || e.altKey || typing(e.target)) return;
+    if (document.querySelector('dialog[open]')) return;
+    e.preventDefault();
+    open();
+  });
+  document.addEventListener('click', (e) => {
+    if ((e.target as Element | null)?.closest('[data-terminal-open]')) open();
+  });
+  document.addEventListener('terminal:open', open);
+
+  // Warm the chunk when the visitor shows intent, so the first open feels instant.
+  onPageLoad(() => {
+    const warm = () => void load();
+    const triggers = document.querySelectorAll<HTMLElement>('[data-terminal-open]');
+    triggers.forEach((t) => t.addEventListener('pointerenter', warm, { once: true }));
+  });
+</script>

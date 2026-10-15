@@ -1,0 +1,116 @@
+---
+import SectionHeader from './SectionHeader.astro';
+import { posts, themes, blogSource, blogFetchedAt, readingMinutes } from '../lib/blog';
+import { snapshotDate } from '../lib/github';
+
+interface Props {
+  index: string;
+}
+const { index } = Astro.props;
+const INITIAL = 8;
+const series = [...new Set(posts.map((p) => p.series).filter(Boolean))];
+const day = (d: string) => new Date(d).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
+---
+
+<section id="writing" class="relative py-24 md:py-36" aria-labelledby="writing-title">
+  <div class="container-x">
+    <SectionHeader index={index} label="PostPublished" title="Appended to the blog." id="writing-title">
+      <p class="mt-6 max-w-[62ch] text-lg leading-relaxed text-fg-muted">
+        {posts.length} posts on <a href={blogSource} class="text-fg underline decoration-line-strong hover:decoration-fg" rel="noopener">blog.cratis.io</a>, about {Math.round(readingMinutes / 60)} hours of reading{series.length > 0 && <>, most of them the <span class="text-fg">{series[0]}</span> series: from naming an event to running it in production</>}.
+      </p>
+    </SectionHeader>
+
+    <div class="mb-6 flex flex-wrap gap-2" role="group" aria-label="Filter posts by theme" data-writing-filters hidden>
+      <button type="button" class="filter" data-theme-filter="all" aria-pressed="true">All <span class="font-mono text-[0.6875rem] opacity-60">{posts.length}</span></button>
+      {
+        themes.map((t) => (
+          <button type="button" class="filter" data-theme-filter={t.id} aria-pressed="false">
+            {t.label} <span class="font-mono text-[0.6875rem] opacity-60">{posts.filter((p) => p.themes.includes(t.id)).length}</span>
+          </button>
+        ))
+      }
+    </div>
+    <p class="sr-only" aria-live="polite" data-writing-status></p>
+
+    <ol class="panel divide-y divide-line overflow-hidden" data-writing-list data-reveal>
+      {
+        posts.map((p, i) => (
+          <li class:list={['post', i >= INITIAL && 'extra']} data-themes={p.themes.join(' ')}>
+            <a href={p.url} rel="noopener" class="group grid gap-x-6 gap-y-2 px-5 py-5 transition-colors hover:bg-fg/[0.02] md:grid-cols-[7rem_1fr_auto] md:px-7">
+              <span class="font-mono text-xs leading-6 text-fg-faint">
+                {p.part !== undefined ? <>Part <span class="text-event">{String(p.part).padStart(2, '0')}</span></> : <span class="text-event">Overview</span>}
+              </span>
+              <span class="min-w-0">
+                <span class="block font-display text-lg leading-snug font-[620] tracking-[-0.01em] text-fg transition-colors group-hover:text-event-soft md:text-xl">{p.headline}</span>
+                <span class="clamp mt-1.5 block text-[0.9375rem] leading-relaxed text-fg-muted">{p.description}</span>
+                <span class="mt-3 flex flex-wrap gap-1.5">
+                  {p.tags.slice(0, 5).map((t) => <span class="tag px-2 py-0 font-mono text-[0.6875rem]">{t}</span>)}
+                </span>
+              </span>
+              <span class="font-mono text-xs whitespace-nowrap text-fg-faint md:text-right md:leading-6">
+                <time datetime={p.date}>{day(p.date)}</time>
+                {p.minutes && <span class="md:block"><span class="md:hidden"> · </span>{p.minutes} min read</span>}
+              </span>
+            </a>
+          </li>
+        ))
+      }
+    </ol>
+    <div class="mt-5 flex flex-wrap items-center justify-between gap-3">
+      {posts.length > INITIAL && <button type="button" class="btn btn-sm" data-writing-more aria-expanded="false">Show all {posts.length} posts</button>}
+      <p class="font-mono text-xs text-fg-faint">snapshot taken <time datetime={blogFetchedAt}>{snapshotDate(blogFetchedAt)}</time></p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .clamp {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  /* Without JS everything shows; with JS the list starts collapsed. */
+  :global(.js) [data-writing-list]:not([data-expanded]):not([data-filtered]) .extra {
+    display: none;
+  }
+</style>
+
+<script>
+  import { onPageLoad, disposer } from '../lib/lifecycle';
+
+  onPageLoad(() => {
+    const bar = document.querySelector<HTMLElement>('[data-writing-filters]');
+    const list = document.querySelector<HTMLElement>('[data-writing-list]');
+    const more = document.querySelector<HTMLButtonElement>('[data-writing-more]');
+    const status = document.querySelector<HTMLElement>('[data-writing-status]');
+    if (!bar || !list) return;
+    const d = disposer();
+    bar.hidden = false;
+    const items = [...list.querySelectorAll<HTMLElement>('.post')];
+
+    d.on<MouseEvent>(bar, 'click', (e) => {
+      const btn = (e.target as Element).closest<HTMLButtonElement>('[data-theme-filter]');
+      if (!btn) return;
+      const id = btn.dataset['themeFilter'] ?? 'all';
+      bar.querySelectorAll('[data-theme-filter]').forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+      list.toggleAttribute('data-filtered', id !== 'all');
+      let shown = 0;
+      for (const li of items) {
+        const match = id === 'all' || (li.dataset['themes'] ?? '').split(' ').includes(id);
+        li.hidden = !match;
+        if (match) shown++;
+      }
+      if (more) more.hidden = id !== 'all';
+      if (status) status.textContent = `Showing ${shown} post${shown === 1 ? '' : 's'}`;
+    });
+    if (more)
+      d.on(more, 'click', () => {
+        const open = !list.hasAttribute('data-expanded');
+        list.toggleAttribute('data-expanded', open);
+        more.setAttribute('aria-expanded', String(open));
+        more.textContent = open ? 'Show fewer' : `Show all ${items.length} posts`;
+      });
+    return d.dispose;
+  });
+</script>
