@@ -7,7 +7,8 @@ import { dirname, join } from 'node:path';
 import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 
-const schemaUrl = 'https://unpkg.com/@cratis/cast/cast-json.schema.json';
+// Pinned to a released version so the check never depends on a CDN refreshing "latest".
+const schemaUrl = 'https://cdn.jsdelivr.net/npm/@cratis/cast@0.2.0/cast-json.schema.json';
 const [profilePath = 'dist/cast.json', schemaPath] = process.argv.slice(2);
 
 async function loadSchema() {
