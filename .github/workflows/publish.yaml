@@ -40,6 +40,8 @@ jobs:
         env:
           # Read-only use: scripts/fetch-github.mjs captures public GitHub data at build time.
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Validate Cast v2 profile
+        run: node scripts/check-cast-json.mjs
 
   # Build website for GitHub Pages
   build:

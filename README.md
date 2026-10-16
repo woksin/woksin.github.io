@@ -29,6 +29,8 @@ Snapshots refresh on hourly builds. On the visible home page, an idle-time brows
 
 The Event Modeling slice is [`src/data/eventModel.ts`](src/data/eventModel.ts), taken from [Varde](https://github.com/woksin/Varde).
 
+The build also publishes `/cast.json`, a [Cast v2 profile](https://github.com/Cratis/Cast/blob/main/Documentation/cast-json.md) generated from the same content and snapshots; validate it with `node scripts/check-cast-json.mjs`.
+
 The portrait is `src/assets/avatar.jpeg`. The social preview image (`public/og.png`) and `public/apple-touch-icon.png` are committed images.
 
 ## Deploy
