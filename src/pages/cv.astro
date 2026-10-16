@@ -3,7 +3,7 @@ import Base from '../layouts/Base.astro';
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
 import { person, careerEvents, cratis, skills, education, certifications, talks } from '../data/site';
-import { liveProjects as projects, mergedPrFloor } from '../lib/github';
+import { liveProjects as projects, mergedPrFloor, cratisRepos } from '../lib/github';
 import { project, formatMonth, normaliseDate } from '../lib/career';
 
 const projection = project(careerEvents);
@@ -92,7 +92,7 @@ const host = (url: string) => url.replace(/^https?:\/\/(www\.)?/, '').replace(/\
                     <p class="mt-2 leading-relaxed text-fg-muted">{r.summary}</p>
                     {r.org === 'Cratis' && (
                       <p class="mt-2 leading-relaxed text-fg-muted">
-                        Founded {cratis.repos.filter((x) => x.founded).map((x) => x.name).join(', ')}; also #1 committer on {cratis.repos.filter((x) => x.rank === 1 && !x.founded).map((x) => x.name).join(', ')}; #2 all-time on {cratis.repos.filter((x) => x.rank === 2 && x.group === 'pipeline').map((x) => x.name).join(' and ')}. {new Intl.NumberFormat('en-US').format(mergedPrFloor)}+ merged pull requests in the Cratis organisation.
+                        Founded {cratis.repos.filter((x) => x.founded).map((x) => x.name).join(', ')}; also #1 committer on {cratisRepos.filter((x) => x.rank === 1 && !x.founded).map((x) => x.name).join(', ')}; #2 all-time on {cratisRepos.filter((x) => x.rank === 2 && x.group === 'pipeline').map((x) => x.name).join(' and ')}. {new Intl.NumberFormat('en-US').format(mergedPrFloor)}+ merged pull requests in the Cratis organisation.
                       </p>
                     )}
                     {r.milestones.length > 0 && (

@@ -140,9 +140,8 @@ async function main() {
       const prs = await mergedCount(`author:${LOGIN} repo:${ORG}/${repo} is:public is:pr is:merged`, token);
       cratisRepos[repo] = { ...counts, prs };
     } catch (err) {
-      warn(`${repo}: ${err instanceof Error ? err.message : err}`);
-      // A persistently unready contributor list requires investigation, not guessed numbers.
-      if (/answered 202|repeatedly empty/.test(String(err))) return;
+      // Keep that repository's previous values; never let one repository stop the whole refresh.
+      warn(`${repo}: ${err instanceof Error ? err.message : err} (keeping previous values)`);
     }
   }
   let dolittleMergedPrs = previous.dolittleMergedPrs;

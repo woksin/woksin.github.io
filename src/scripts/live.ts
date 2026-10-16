@@ -71,7 +71,7 @@ function renderMerged(data: Merged): void {
   document.querySelectorAll('[data-pr-status]').forEach((el) => { el.textContent = 'live'; });
   const list = document.querySelector('[data-pr-feed]');
   const template = document.querySelector<HTMLTemplateElement>('[data-pr-template]');
-  if (!list || !template) return;
+  if (!list || !template || !data.latest.length) return;
   const rows = data.latest.slice(0, 8).map((pr, i) => {
     const row = template.content.firstElementChild!.cloneNode(true) as HTMLElement;
     row.style.setProperty('--i', String(i));
