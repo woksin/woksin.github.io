@@ -1,10 +1,78 @@
 {
-  "fetchedAt": "2026-10-15T21:13:17.625Z",
+  "fetchedAt": "2026-10-16T08:05:36.774Z",
   "login": "woksin",
   "org": "Cratis",
+  "cratisRepos": {
+    "Screenplay": {
+      "commits": 2190,
+      "rank": 1,
+      "prs": 310
+    },
+    "Stage": {
+      "commits": 1057,
+      "rank": 1,
+      "prs": 201
+    },
+    "Arc": {
+      "commits": 2190,
+      "rank": 2,
+      "prs": 414
+    },
+    "Chronicle": {
+      "commits": 3805,
+      "rank": 2,
+      "prs": 467
+    },
+    "AI": {
+      "commits": 1177,
+      "rank": 1,
+      "prs": 207
+    },
+    "cli": {
+      "commits": 622,
+      "rank": 1,
+      "prs": 133
+    },
+    "Lens": {
+      "commits": 57,
+      "rank": 1,
+      "prs": 18
+    },
+    "Chronicle.Mcp": {
+      "commits": 39,
+      "rank": 2,
+      "prs": 13
+    },
+    "Chronicle.TypeScript": {
+      "commits": 480,
+      "rank": 1,
+      "prs": 113
+    },
+    "Chronicle.Go": {
+      "commits": 423,
+      "rank": 1,
+      "prs": 16
+    },
+    "Chronicle.Python": {
+      "commits": 35,
+      "rank": 1,
+      "prs": 11
+    },
+    "Chronicle.Kotlin": {
+      "commits": 177,
+      "rank": 2,
+      "prs": 48
+    },
+    "Chronicle.Elixir": {
+      "commits": 134,
+      "rank": 2,
+      "prs": 35
+    }
+  },
+  "dolittleMergedPrs": 769,
   "contributions": {
-    "total": 31793,
-    "commits": 17551,
+    "total": 32046,
+    "commits": 17691,
     "weeks": [
       {
         "start": "2025-10-12",
@@ -216,96 +284,96 @@
       },
       {
         "start": "2026-10-11",
-        "counts": [849, 673, 900, 1043, 651]
+        "counts": [849, 673, 900, 1043, 714, 190]
       }
     ]
   },
   "mergedPullRequests": {
-    "total": 3105,
+    "total": 3124,
     "latest": [
       {
-        "title": "Admit described command handlers as pending implementation requirements",
+        "title": "Resume jobs left running by a crashed silo",
+        "repo": "Orleans",
+        "number": 78,
+        "url": "https://github.com/Cratis/Orleans/pull/78",
+        "mergedAt": "2026-10-16T07:45:42Z"
+      },
+      {
+        "title": "Accept ESM v23 models and refuse described command handlers",
+        "repo": "Stage",
+        "number": 461,
+        "url": "https://github.com/Cratis/Stage/pull/461",
+        "mergedAt": "2026-10-16T07:38:48Z"
+      },
+      {
+        "title": "Public generation strategy catalog and single-concept check",
         "repo": "Screenplay",
-        "number": 808,
-        "url": "https://github.com/Cratis/Screenplay/pull/808",
-        "mergedAt": "2026-10-15T20:59:22Z"
+        "number": 819,
+        "url": "https://github.com/Cratis/Screenplay/pull/819",
+        "mergedAt": "2026-10-16T06:49:44Z"
       },
       {
-        "title": "Render composites with optional null-passing validated concepts",
+        "title": "Refuse validation rules of unknown kind",
         "repo": "Stage",
-        "number": 444,
-        "url": "https://github.com/Cratis/Stage/pull/444",
-        "mergedAt": "2026-10-15T20:42:06Z"
+        "number": 460,
+        "url": "https://github.com/Cratis/Stage/pull/460",
+        "mergedAt": "2026-10-16T06:42:14Z"
       },
       {
-        "title": "Read protection for commands",
+        "title": "Use short type names in generated Common concept and type files",
+        "repo": "Stage",
+        "number": 459,
+        "url": "https://github.com/Cratis/Stage/pull/459",
+        "mergedAt": "2026-10-16T06:29:28Z"
+      },
+      {
+        "title": "Allow rules and requirements on commands with generated properties",
+        "repo": "Stage",
+        "number": 458,
+        "url": "https://github.com/Cratis/Stage/pull/458",
+        "mergedAt": "2026-10-16T05:38:40Z"
+      },
+      {
+        "title": "Resolve grouped proxy imports by full type name",
         "repo": "Arc",
-        "number": 3323,
-        "url": "https://github.com/Cratis/Arc/pull/3323",
-        "mergedAt": "2026-10-15T20:29:27Z"
+        "number": 3326,
+        "url": "https://github.com/Cratis/Arc/pull/3326",
+        "mergedAt": "2026-10-16T04:40:10Z"
       },
       {
-        "title": "Add implementation-gap contracts to render plans",
+        "title": "Run composite command inputs in the specification executor",
         "repo": "Stage",
-        "number": 443,
-        "url": "https://github.com/Cratis/Stage/pull/443",
-        "mergedAt": "2026-10-15T20:20:18Z"
+        "number": 453,
+        "url": "https://github.com/Cratis/Stage/pull/453",
+        "mergedAt": "2026-10-16T03:26:07Z"
       },
       {
-        "title": "State constrained reaction batches with atomic reaction batches (ESM v22)",
-        "repo": "Arc",
-        "number": 3320,
-        "url": "https://github.com/Cratis/Arc/pull/3320",
-        "mergedAt": "2026-10-15T19:53:21Z"
-      },
-      {
-        "title": "Regression specs for observer partition isolation and a failed first snapshot",
-        "repo": "Chronicle",
-        "number": 4522,
-        "url": "https://github.com/Cratis/Chronicle/pull/4522",
-        "mergedAt": "2026-10-15T18:38:41Z"
-      },
-      {
-        "title": "Admit ESM v21 with typed refusals; pin generated values only for unproven rules",
-        "repo": "Stage",
-        "number": 442,
-        "url": "https://github.com/Cratis/Stage/pull/442",
-        "mergedAt": "2026-10-15T18:37:52Z"
-      },
-      {
-        "title": "Format TenantId as its value and bind the generation context per target",
+        "title": "Public value-level rule check for executable model consumers",
         "repo": "Screenplay",
-        "number": 807,
-        "url": "https://github.com/Cratis/Screenplay/pull/807",
-        "mergedAt": "2026-10-15T18:25:12Z"
+        "number": 814,
+        "url": "https://github.com/Cratis/Screenplay/pull/814",
+        "mergedAt": "2026-10-16T03:21:18Z"
       },
       {
-        "title": "Reject generated values that fail a concept rule of any severity",
-        "repo": "Arc",
-        "number": 3319,
-        "url": "https://github.com/Cratis/Arc/pull/3319",
-        "mergedAt": "2026-10-15T17:50:33Z"
+        "title": "First-class text rules and Studio pattern desugaring",
+        "repo": "Screenplay",
+        "number": 813,
+        "url": "https://github.com/Cratis/Screenplay/pull/813",
+        "mergedAt": "2026-10-16T03:05:04Z"
       },
       {
-        "title": "Bind same-named queries across slices without a binder exemption",
-        "repo": "Arc",
-        "number": 3318,
-        "url": "https://github.com/Cratis/Arc/pull/3318",
-        "mergedAt": "2026-10-15T17:47:20Z"
-      },
-      {
-        "title": "Enforce modeled validation rules faithfully in the default sandbox engine",
+        "title": "Render and execute generate pattern and generate random concepts",
         "repo": "Stage",
-        "number": 438,
-        "url": "https://github.com/Cratis/Stage/pull/438",
-        "mergedAt": "2026-10-15T17:22:26Z"
+        "number": 450,
+        "url": "https://github.com/Cratis/Stage/pull/450",
+        "mergedAt": "2026-10-16T02:24:43Z"
       },
       {
-        "title": "Bundle Stage 4.113.0: render ESM v20 and explain cratis run refusals",
-        "repo": "cli",
-        "number": 373,
-        "url": "https://github.com/Cratis/cli/pull/373",
-        "mergedAt": "2026-10-15T14:44:20Z"
+        "title": "Recover pattern, random and rule generation in Screenplay",
+        "repo": "Arc",
+        "number": 3325,
+        "url": "https://github.com/Cratis/Arc/pull/3325",
+        "mergedAt": "2026-10-16T01:58:44Z"
       }
     ]
   },

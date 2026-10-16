@@ -1,7 +1,8 @@
 // woksin@stream:~$ — an interactive terminal over the same data the page renders.
 // Lazy-loaded by Terminal.astro on first open.
 import { person, now, careerEvents, skills, cratis, talks } from '../data/site';
-import { github, liveProjects as projects, mergedPrTotal, snapshotDate } from '../lib/github';
+import { github, cratisRepos, liveProjects as projects, mergedPrTotal, snapshotDate } from '../lib/github';
+import { getLiveMerged } from './live';
 import { relativeTime } from '../lib/reltime';
 import { posts as blogPosts, themes as blogThemes } from '../lib/blog';
 import { copyText } from '../lib/clipboard';
@@ -124,7 +125,7 @@ class Terminal {
 
   private greet(): void {
     this.greeted = true;
-    this.print(c.ev('woksin@stream'), c.faint(` · stream position ${careerEvents.length} · ${mergedPrTotal.toLocaleString('en-US')} PRs merged in Cratis`));
+    this.print(c.ev('woksin@stream'), c.faint(` · stream position ${careerEvents.length} · ${(getLiveMerged()?.total ?? mergedPrTotal).toLocaleString('en-US')} PRs merged in Cratis`));
     this.print(c.faint(`GitHub snapshot taken ${snapshotDate()}. Everything here is real data.`));
     this.print('Type ', c.fg('help'), ' to see what you can do, or tap a suggestion below.');
     this.blank();
@@ -397,9 +398,10 @@ class Terminal {
         complete: (args) => (args.length ? ['-n'] : ['tail']),
         run: ([sub, flag, n]) => {
           if (sub !== 'tail') return this.print(c.ev('stream: '), 'try ', c.fg('stream tail'));
-          const prs = github.mergedPullRequests.latest;
+          const live = getLiveMerged();
+          const prs = live?.latest ?? github.mergedPullRequests.latest;
           const count = flag === '-n' ? Math.max(1, Math.min(prs.length, Number(n) || prs.length)) : prs.length;
-          this.print(c.faint(`tail ${github.org} · snapshot taken ${snapshotDate()} · ${mergedPrTotal.toLocaleString('en-US')} merged in total`));
+          this.print(c.faint(`tail ${github.org} · ${live ? 'live' : `snapshot taken ${snapshotDate()}`} · ${(live?.total ?? mergedPrTotal).toLocaleString('en-US')} merged in total`));
           prs.slice(0, count).forEach((pr, i) => {
             this.print(
               c.faint(pad(i === 0 ? 'HEAD' : `HEAD~${i}`, 8)),
@@ -409,7 +411,7 @@ class Terminal {
               c.faint(` · ${relativeTime(pr.mergedAt)}`),
             );
           });
-          if (!prs.length) this.print(c.faint('EventNotFound: the snapshot has no merged pull requests.'));
+          if (!prs.length) this.print(c.faint(live ? 'EventNotFound: the live feed has no merged pull requests.' : 'EventNotFound: the snapshot has no merged pull requests.'));
         },
       },
       replay: {
@@ -504,8 +506,8 @@ class Terminal {
         desc: 'what Cratis is',
         run: () => {
           this.print(c.fg(cratis.pitch));
-          this.print(c.faint(`${mergedPrTotal.toLocaleString('en-US')} merged PRs · `), link(person.links.cratis));
-          for (const r of cratis.repos) this.print(c.cmd(pad(r.name, 21)), c.faint(pad(r.role, 16)), r.url ? link(r.url, r.desc) : r.desc);
+          this.print(c.faint(`${(getLiveMerged()?.total ?? mergedPrTotal).toLocaleString('en-US')} merged PRs · `), link(person.links.cratis));
+          for (const r of cratisRepos) this.print(c.cmd(pad(r.name, 21)), c.faint(pad(r.role, 16)), r.url ? link(r.url, r.desc) : r.desc);
         },
       },
       clear: { desc: 'clear the screen (Ctrl+L)', run: () => this.clear() },

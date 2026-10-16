@@ -34,9 +34,9 @@ const labels: BoardLabels = {
   <div class="container-x relative py-20 md:py-28">
     <p class="hero-in mb-8 inline-flex items-center gap-3 rounded-full border border-line bg-ink-900/70 py-1.5 pr-4 pl-2 font-mono text-xs text-fg-muted backdrop-blur" style="--d:0ms">
       <span class="inline-flex items-center gap-1.5 rounded-full bg-view/10 px-2 py-0.5 text-view">
-        <span class="size-1.5 animate-pulse-dot rounded-full bg-view"></span>live
+        <span class="size-1.5 animate-pulse-dot rounded-full bg-view"></span><span data-event-status>career</span>
       </span>
-      stream <span class="text-fg">woksin</span> · position <span class="text-event">{position}</span>
+      stream <span class="text-fg">woksin</span> · <span data-public-event>position <span class="text-event">{position}</span></span>
     </p>
 
     <h1>
@@ -145,6 +145,7 @@ const labels: BoardLabels = {
 </style>
 
 <script>
+  import '../scripts/live';
   import { mountEventBoard, type BoardLabels } from '../scripts/event-board';
   import { onPageLoad } from '../lib/lifecycle';
   import { motionReduced } from '../lib/motion';

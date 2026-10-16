@@ -1,7 +1,7 @@
 ---
 import { cratis, person, type CratisRepo } from '../data/site';
 import SectionHeader from './SectionHeader.astro';
-import { github, mergedPrFloor, mergedPrTotal, snapshotDate } from '../lib/github';
+import { github, cratisRepos, mergedPrFloor, mergedPrTotal, snapshotDate } from '../lib/github';
 import { relativeTime } from '../lib/reltime';
 
 // The section shows the newest eight; the terminal's `stream tail` gets the full snapshot.
@@ -9,17 +9,17 @@ const feed = github.mergedPullRequests.latest.slice(0, 8);
 const builtAt = Date.parse(github.fetchedAt);
 
 const fmt = new Intl.NumberFormat('en-US');
-const byName = new Map(cratis.repos.map((r) => [r.name, r]));
+const byName = new Map(cratisRepos.map((r) => [r.name, r]));
 const pipeline = cratis.pipeline.map((n) => byName.get(n)).filter((r): r is CratisRepo => !!r);
-const tooling = cratis.repos.filter((r) => r.group === 'tooling');
-const clients = cratis.repos.filter((r) => r.group === 'client');
-const asOf = new Date(`${cratis.asOf}T00:00:00Z`).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
+const tooling = cratisRepos.filter((r) => r.group === 'tooling');
+const clients = cratisRepos.filter((r) => r.group === 'client');
+const asOf = snapshotDate();
 
 const headline = [
-  { value: `#1`, label: `committer on ${cratis.repos.filter((r) => r.rank === 1).length} Cratis repositories` },
+  { value: `#1`, label: `committer on ${cratisRepos.filter((r) => r.rank === 1).length} Cratis repositories` },
   { value: String(cratis.repos.filter((r) => r.founded).length), label: `repositories founded: ${cratis.repos.filter((r) => r.founded).map((r) => r.name).join(', ')}` },
   { value: String(cratis.clientLanguages.length), label: `Chronicle client languages: ${cratis.clientLanguages.join(', ')}` },
-  { value: `${fmt.format(mergedPrFloor)}+`, label: `merged PRs in the Cratis org, live (${fmt.format(mergedPrTotal)} at the last build)` },
+  { value: `${fmt.format(mergedPrFloor)}+`, label: 'merged PRs in the Cratis org' },
 ];
 const badge = (r: CratisRepo) => (r.founded ? 'b-founded' : r.rank === 1 ? 'b-lead' : 'b-muted');
 ---
@@ -45,8 +45,11 @@ const badge = (r: CratisRepo) => (r.founded ? 'b-founded' : r.rank === 1 ? 'b-le
       {
         headline.map((h, i) => (
           <div class="flex flex-col bg-ink-900 p-5 md:p-6">
-            <dt class="order-2 mt-2 text-sm leading-snug text-fg-muted">{h.label}</dt>
-            <dd class={`order-1 font-display text-[clamp(2.25rem,4.4vw,3.5rem)] leading-none font-[680] tracking-[-0.04em] tabular-nums ${['text-command', 'text-event', 'text-view', 'text-fg'][i]}`}>{h.value}</dd>
+            <dt class="order-2 mt-2 text-sm leading-snug text-fg-muted">
+              {h.label}
+              {i === 3 && <> (<span data-merged-prs="exact">{fmt.format(mergedPrTotal)}</span>, <span data-pr-status>as of {asOf}</span>)</>}
+            </dt>
+            <dd data-merged-prs={i === 3 ? 'floor' : undefined} class={`order-1 font-display text-[clamp(2.25rem,4.4vw,3.5rem)] leading-none font-[680] tracking-[-0.04em] tabular-nums ${['text-command', 'text-event', 'text-view', 'text-fg'][i]}`}>{h.value}</dd>
           </div>
         ))
       }
@@ -139,11 +142,27 @@ const badge = (r: CratisRepo) => (r.founded ? 'b-founded' : r.rank === 1 ? 'b-le
             <span class="size-1.5 animate-pulse-dot rounded-full bg-view" aria-hidden="true"></span>
             <span class="text-fg-faint">tail -f</span> <span class="text-fg">Tailing the stream</span>
           </h3>
-          <p class="font-mono text-xs text-fg-faint">snapshot taken <time datetime={github.fetchedAt}>{snapshotDate()}</time></p>
+          <p data-pr-status class="font-mono text-xs text-fg-faint">as of <time datetime={github.fetchedAt}>{snapshotDate()}</time></p>
         </div>
+        <template data-pr-template>
+          <li class="feed-row">
+            <a rel="noopener" class="group grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 px-5 py-3.5 transition-colors hover:bg-fg/[0.025] sm:grid-cols-[4.5rem_1fr_auto]">
+              <span data-pr-head class="font-mono text-xs leading-6 text-fg-faint tabular-nums"></span>
+              <span class="min-w-0">
+                <span class="flex flex-wrap items-center gap-x-2.5 gap-y-1 font-mono text-xs">
+                  <span class="text-event">PullRequestMerged</span>
+                  <span data-pr-repo class="rounded-md border border-command/25 bg-command/8 px-1.5 py-px text-command-soft"></span>
+                  <span data-pr-number class="text-fg-faint"></span>
+                </span>
+                <span data-pr-title class="mt-1 block text-[0.9375rem] leading-snug text-fg group-hover:underline"></span>
+              </span>
+              <time data-rel class="col-start-2 font-mono text-xs text-fg-faint sm:col-start-3 sm:leading-6"></time>
+            </a>
+          </li>
+        </template>
         {
           feed.length ? (
-            <ol class="divide-y divide-line" aria-label={`Latest merged pull requests in ${github.org}`}>
+            <ol data-pr-feed class="divide-y divide-line" aria-label={`Latest merged pull requests in ${github.org}`}>
               {feed.map((pr, i) => (
                 <li class="feed-row" style={`--i:${i}`}>
                   <a href={pr.url} rel="noopener" class="group grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 px-5 py-3.5 transition-colors hover:bg-fg/[0.025] sm:grid-cols-[4.5rem_1fr_auto]">
@@ -162,11 +181,13 @@ const badge = (r: CratisRepo) => (r.founded ? 'b-founded' : r.rank === 1 ? 'b-le
               ))}
             </ol>
           ) : (
-            <p class="px-5 py-8 font-mono text-sm text-fg-faint">EventNotFound: the snapshot has no merged pull requests yet.</p>
+            <ol data-pr-feed class="divide-y divide-line" aria-label={`Latest merged pull requests in ${github.org}`}>
+              <li class="px-5 py-8 font-mono text-sm text-fg-faint">EventNotFound: the snapshot has no merged pull requests yet.</li>
+            </ol>
           )
         }
         <p class="border-t border-line px-5 py-3 font-mono text-[0.6875rem] text-fg-faint">
-          Public repositories only, newest first. Refreshed on every daily build.
+          Public repositories only, newest first. Refreshed hourly and on page load.
         </p>
       </div>
 

@@ -1,6 +1,6 @@
 // Typed access to the GitHub snapshot captured at build time by scripts/fetch-github.mjs.
 import raw from '../data/github.json';
-import { cratis, projects, type Project } from '../data/site';
+import { cratis, projects, type Project, type CratisRepo } from '../data/site';
 
 export type PullRequest = { title: string; repo: string; number: number; url: string; mergedAt: string };
 export type Week = { start: string; counts: number[] };
@@ -12,12 +12,25 @@ type Snapshot = {
   mergedPullRequests: { total: number; latest: PullRequest[] };
   releases: Record<string, { tag: string; publishedAt: string; url: string }>;
   stars: Record<string, number>;
+  cratisRepos?: Record<string, { commits: number; prs: number; rank: number }>;
+  dolittleMergedPrs?: number;
 };
 
 export const github = raw as Snapshot;
 
 /** Merged Cratis PRs from the snapshot, falling back to the hand-maintained number. */
-export const mergedPrTotal: number = github.mergedPullRequests.total || cratis.mergedPrs;
+export const mergedPrTotal: number = github.mergedPullRequests.total ?? cratis.mergedPrs;
+
+/** Per-repository figures prefer the snapshot; hand-entered values are fallbacks only. */
+export const cratisRepos: CratisRepo[] = cratis.repos.map((repo) => {
+  const counts = repo.url ? github.cratisRepos?.[repo.name] : undefined;
+  if (!counts) return repo;
+  const rank = counts.rank;
+  const role = repo.founded ? (rank === 1 ? 'Founder & lead' : 'Founder')
+    : rank === 1 ? (repo.role.startsWith('#') ? '#1 committer' : 'Lead developer')
+    : rank === 2 ? (repo.group === 'client' ? '#2 contributor' : '#2 all-time') : 'Contributor';
+  return { ...repo, ...counts, role };
+});
 
 /** Floors to hundreds for an honest "3,100+" style figure. */
 export const mergedPrFloor: number = Math.floor(mergedPrTotal / 100) * 100;

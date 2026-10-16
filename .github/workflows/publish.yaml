@@ -4,9 +4,9 @@ on:
   push:
     branches: ["master"]
   pull_request:
-  # Daily rebuild so the GitHub snapshot (contributions, merged PRs, releases) stays fresh.
+  # Hourly rebuild so the GitHub snapshot (contributions, merged PRs, releases) stays fresh.
   schedule:
-    - cron: '17 4 * * *'
+    - cron: '17 * * * *'
   # Allows you to run this workflow manually from the Actions tab on GitHub.
   workflow_dispatch:
 

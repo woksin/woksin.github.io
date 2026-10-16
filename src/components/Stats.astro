@@ -1,10 +1,10 @@
 ---
 import { stats as siteStats, cratis } from '../data/site';
-import { github, mergedPrFloor } from '../lib/github';
+import { github, cratisRepos, mergedPrFloor, snapshotDate } from '../lib/github';
 
-const rankOne = cratis.repos.filter((r) => r.rank === 1).length;
+const rankOne = cratisRepos.filter((r) => r.rank === 1).length;
 const live: Record<string, (s: (typeof siteStats)[number]) => Partial<(typeof siteStats)[number]>> = {
-  // Floored to hundreds so the "+" stays true between daily builds.
+  // Floored to hundreds so the "+" stays true between hourly builds.
   contributionsLastYear: () => (github.contributions.total ? { value: Math.floor(github.contributions.total / 100) * 100 } : {}),
   cratisMergedPrs: () => ({ value: mergedPrFloor }),
   cratisRankOne: () => ({ label: `committer on ${rankOne} Cratis repositories` }),
@@ -27,9 +27,11 @@ const accents = ['text-event', 'text-command', 'text-view', 'text-fg'];
               data-reveal
               style={`--reveal-delay:${i * 80}ms`}
             >
-              <dt class="order-2 max-w-[18ch] text-sm leading-snug text-fg-muted">{s.label}</dt>
+              <dt class="order-2 max-w-[18ch] text-sm leading-snug text-fg-muted">{s.label}
+                {s.live === 'cratisMergedPrs' && <span data-pr-status class="mt-1 block font-mono text-[0.6875rem] text-fg-faint">as of {snapshotDate()}</span>}
+              </dt>
               <dd class={`order-1 font-display text-[clamp(2.5rem,5vw,4rem)] leading-none font-[650] tracking-[-0.04em] tabular-nums ${accents[i % accents.length]}`}>
-                {s.prefix}<span data-count={plain ? undefined : s.value}>{plain ? s.value : fmt.format(s.value)}</span>
+                {s.prefix}<span data-merged-prs={s.live === 'cratisMergedPrs' ? 'number' : undefined} data-count={plain ? undefined : s.value}>{plain ? s.value : fmt.format(s.value)}</span>
                 {s.suffix && <span class="text-fg-faint">{s.suffix}</span>}
               </dd>
             </div>
@@ -46,25 +48,34 @@ const accents = ['text-event', 'text-command', 'text-view', 'text-fg'];
   onPageLoad(() => {
     const fmt = new Intl.NumberFormat('en-US');
     const els = document.querySelectorAll<HTMLElement>('[data-count]');
+    const frames = new Set<number>();
+    let io: IntersectionObserver | undefined;
     if (!motionReduced() && 'IntersectionObserver' in window) {
       const run = (el: HTMLElement) => {
         const target = Number(el.dataset['count']);
         const duration = 1600;
         const start = performance.now();
+        let frame: number;
         const step = (ts: number) => {
+          frames.delete(frame);
+          // A browser refresh supersedes this build-time tween.
+          if (el.dataset['live'] === 'true') return;
           const p = Math.min(1, (ts - start) / duration);
           const eased = 1 - Math.pow(1 - p, 4);
           el.textContent = fmt.format(Math.round(target * eased));
-          if (p < 1 && !motionReduced()) requestAnimationFrame(step);
-          else el.textContent = fmt.format(target);
+          if (p < 1 && !motionReduced()) {
+            frame = requestAnimationFrame(step);
+            frames.add(frame);
+          } else el.textContent = fmt.format(target);
         };
-        requestAnimationFrame(step);
+        frame = requestAnimationFrame(step);
+        frames.add(frame);
       };
-      const io = new IntersectionObserver(
+      io = new IntersectionObserver(
         (entries) => {
           for (const e of entries) {
             if (!e.isIntersecting) continue;
-            io.unobserve(e.target);
+            io?.unobserve(e.target);
             run(e.target as HTMLElement);
           }
         },
@@ -75,8 +86,12 @@ const accents = ['text-event', 'text-command', 'text-view', 'text-fg'];
         el.style.display = 'inline-block';
         el.style.minWidth = `${el.getBoundingClientRect().width}px`;
         el.textContent = '0';
-        io.observe(el);
+        io?.observe(el);
       });
     }
+    return () => {
+      io?.disconnect();
+      frames.forEach((frame) => cancelAnimationFrame(frame));
+    };
   });
 </script>
