@@ -16,6 +16,9 @@ const liveStats: Record<string, string> = {
 };
 
 /** Only the endpoint knows the built portrait URL and Astro's canonical site URL. */
+// Cast renders *words* as the Cratis display accent; the site itself keeps its own styling.
+const tagline = person.tagline.replace(/remember everything\.$/, '*remember everything.*');
+
 export function buildCastJson(photo: string, siteUrl: URL) {
   return {
     $schema: 'https://unpkg.com/@cratis/cast/cast-json.schema.json',
@@ -24,11 +27,12 @@ export function buildCastJson(photo: string, siteUrl: URL) {
     generator: 'woksin.com build',
     // The directory also reads these summaries for its member cards.
     title: person.title,
+    // Cast renders *words* as the Cratis display accent; the site itself keeps its own styling.
     tagline: person.tagline,
     profile: {
       cast: {
         site: { url: siteUrl.origin, language: 'en' },
-        person: { ...person, photo },
+        person: { ...person, photo, tagline },
         now,
         stats: stats.map((stat) => ({ ...stat, live: liveStats[stat.live] })),
         career: { events: careerEvents },
@@ -72,7 +76,8 @@ export function buildCastJson(photo: string, siteUrl: URL) {
           releases: Object.keys(github.releases).map((name) => `${person.handle}/${name}`),
           stars: Object.keys(github.stars).map((name) => `${github.org}/${name}`),
         },
-        theme: { accent: '#ff8a3d', mode: 'dark' },
+        // No accent: on cast.cratis.io the profile uses the Cratis violet.
+        theme: { mode: 'dark' },
       },
       github: {
         login: github.login,
