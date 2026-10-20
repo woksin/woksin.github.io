@@ -1,9 +1,5 @@
-// The Cast v2 profile is a projection of the same content and snapshots as the site.
-import {
-  person, now, stats, careerEvents, cratis, talks, community, agentic,
-  skills, education, certifications,
-} from '../data/site';
-import { eventModel } from '../data/eventModel';
+// The Cast v2 profile publishes a Cratis-focused subset of the site's content and snapshots.
+import { person, now, stats, careerEvents, cratis, talks, community } from '../data/site';
 import { github, cratisRepos, liveProjects } from './github';
 import { themes } from './blog';
 import blog from '../data/blog.json';
@@ -20,6 +16,23 @@ const liveStats: Record<string, string> = {
 const tagline = person.tagline.replace(/remember everything\.$/, '*remember everything.*');
 
 export function buildCastJson(photo: string, siteUrl: URL) {
+  const professionalEvents = careerEvents
+    .filter((event) => [
+      'ContractStarted', 'EmploymentStarted', 'CompanyCoFounded',
+      'SystemDeployed', 'LeadershipAssigned', 'TalkGiven', 'ToolReleased',
+    ].includes(event.type))
+    // Client assignments stay on woksin.com; Cast shows the employer, not the client.
+    .filter((event) => !event.org?.includes('Azets'))
+    .map((event) => (event.org === 'Everdeen'
+      ? { ...event, summary: 'Senior independent consultant through Everdeen, an approved Norwegian staffing firm: event-driven, multi-tenant platforms and event modeling with client teams.' }
+      : event))
+    .map((event, index) => ({ ...event, seq: index + 1 }));
+  const projects = liveProjects.filter((project) =>
+    project.name === 'workstats'
+    || project.url.startsWith('https://github.com/Cratis/')
+    // Varde is built on Cratis Arc and Chronicle.
+    || project.stack.some((tool) => tool === 'Arc' || tool === 'Chronicle'));
+
   return {
     $schema: 'https://unpkg.com/@cratis/cast/cast-json.schema.json',
     castJsonVersion: 2,
@@ -32,10 +45,20 @@ export function buildCastJson(photo: string, siteUrl: URL) {
     profile: {
       cast: {
         site: { url: siteUrl.origin, language: 'en' },
-        person: { ...person, photo, tagline },
-        now,
+        person: {
+          name: person.name,
+          handle: person.handle,
+          title: person.title,
+          titleShort: person.titleShort,
+          location: person.location,
+          links: { ...person.links, 'More about me': 'https://www.woksin.com' },
+          photo,
+          tagline,
+          intro: person.intro,
+        },
+        now: { role: now.role, company: now.company, since: now.since, cratis: now.cratis },
         stats: stats.map((stat) => ({ ...stat, live: liveStats[stat.live] })),
-        career: { events: careerEvents },
+        career: { events: professionalEvents },
         cratis: {
           pitch: cratis.pitch,
           role: cratis.role,
@@ -49,7 +72,7 @@ export function buildCastJson(photo: string, siteUrl: URL) {
           repos: cratisRepos,
           highlights: cratis.highlights,
         },
-        projects: liveProjects.map((project) => ({
+        projects: projects.map((project) => ({
           ...project,
           featured: project.name === 'workstats' || project.name === 'Varde',
         })),
@@ -57,7 +80,7 @@ export function buildCastJson(photo: string, siteUrl: URL) {
           { id: 'cli', label: 'CLI' },
           { id: 'agents', label: 'Agent tooling', filter: 'Agents' },
           { id: 'app', label: 'App', filter: 'Apps' },
-        ],
+        ].filter((category) => projects.some((project) => project.category === category.id)),
         talks: talks.map(({ year: _year, ...talk }) => talk),
         community,
         writing: {
@@ -65,11 +88,6 @@ export function buildCastJson(photo: string, siteUrl: URL) {
           themes,
           agenticTheme: 'ai',
         },
-        agentic,
-        eventModel,
-        skills,
-        education,
-        certifications,
         github: {
           login: person.handle,
           orgs: [github.org],
