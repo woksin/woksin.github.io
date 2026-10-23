@@ -1,6 +1,9 @@
 # woksin.com
 
-Portfolio and CV of Sindre Wilting, built as an "event-sourced CV": the career is an event stream and every section of the page is a projection of it.
+My portfolio and CV, built as an "event-sourced CV": the career is an event stream and every section of the page is a projection of it. Live at [www.woksin.com](https://www.woksin.com).
+
+[![Deploy](https://img.shields.io/github/actions/workflow/status/woksin/woksin.github.io/publish.yaml?branch=master&label=deploy)](https://github.com/woksin/woksin.github.io/actions/workflows/publish.yaml)
+[![Astro](https://img.shields.io/badge/built%20with-Astro-BC52EE?logo=astro&logoColor=white)](https://astro.build)
 
 Built with [Astro](https://astro.build), TypeScript and Tailwind CSS. Static output, no UI framework; the interactive parts (hero event board, career replay, event model, command palette, terminal) are small vanilla TypeScript modules, with view transitions between pages.
 
